@@ -735,8 +735,7 @@ def parameters_02(input_image_folder, fiducial_template_folder, dataset):
     # text file where the centre of the template is indicated
     center_fidu_tempate_CSV = fiducial_template_folder + "/Center_Fiduciales.txt"
     # folder where temporary fiducials of the images will be saved
-    corner_folder = os.path.dirname(
-        input_image_folder) + '/' + '_temp_fiducials'
+    corner_folder = os.path.dirname(input_image_folder + '/' + '_temp_fiducials')
     # parameter for ShiTomasi corner detection. 'fixed' or 'barycentre'
     type_fidu = "barycentre"
     Out_fiducialmarks_CSV = input_image_folder + '/' + '_fiducial_marks_coordinates_' + dataset + '.csv'

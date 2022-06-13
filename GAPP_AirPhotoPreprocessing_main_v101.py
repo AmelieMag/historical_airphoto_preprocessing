@@ -66,7 +66,8 @@ def main_script(input_folder,output_folder, template_folder, dataset, chosen_p, 
     camera=str(chosen_camera)
     fiducialmarks_file= output_canvas_sized + '/' + '_fiducial_marks_coordinates_' + dataset_0 + '.csv'
 
-    scale_percent_0= 100 / float(chosen_input_res * float(chosen_output_res))
+    scale_percent_0 = 60
+    print( scale_percent_0)
     chosen_HistoCal_0=str(chosen_HistoCal)
     chosen_SharpIntensity_0=float(chosen_SharpIntensity)
 
@@ -88,7 +89,7 @@ def main_script(input_folder,output_folder, template_folder, dataset, chosen_p, 
     if Steps['Script_04'] == 1:
         main_script_04(output_reprojected, output_resized, scale_percent_0, chosen_HistoCal_0, chosen_SharpIntensity_0)
 
-
+#############################################################################################
 
 if __name__== '__main__':
     print(' ')
@@ -111,9 +112,9 @@ if __name__== '__main__':
 
     """test windows"""
 
-    input_folder =  'D:/ENSG_internship_2022/script_Amelie/GAPP-Antoine/test/5858_001-005/'
-    output_folder = '' # useless for the moment
-    fiducial_folder = 'D:/ENSG_internship_2022/script_Amelie/GAPP-Antoine/test/fiducial_marks'
+    input_folder =  'D:/ENSG_internship_2022/git/test/5858_001-005/'
+    output_folder = 'D:/ENSG_internship_2022/git/test/'
+    fiducial_folder = 'D:/ENSG_internship_2022/git/test/fiducial_marks'
     dataset = 'Virunga_1958'
 
 
@@ -124,29 +125,29 @@ if __name__== '__main__':
 
     # don't change the two following parameters scriptisn't ready
     stripes = 'right, bottom'
-    camera = 'wild RC5a'
+    camera = 'Wild RC5a'
 
     input_resolution = 1600
     output_resolution = 900
     choosen_HistoCal = True
     SharpIntensity = 2.0
     Steps = {'Script_01': 0,  # GAPP_Script_01_AirPhoto_CanvasSizing_v201
-             'Script_02': 1,  # GAPP_Script_02_AutomaticFiducialDetection_v201
+             'Script_02': 0,  # GAPP_Script_02_AutomaticFiducialDetection_v201
              'Script_03': 0,  # GAPP_Script_03_AirPhoto_Reprojection_v201
-             'Script_04': 0}  # GAPP_Script_04_AirPhotos_Resize_v201
+             'Script_04': 1}  # GAPP_Script_04_AirPhotos_Resize_v201
 
     ###############################################################################
 
     # cleaning the folder / be carefull if you want to use the script several times
 
-    if '01_CanvasSized' in os.listdir(input_folder) and Steps['Script_01']==1:
-        shutil.rmtree(input_folder + '/01_CanvasSized')
+    if '01_CanvasSized' in os.listdir(output_folder) and Steps['Script_01']==1:
+        shutil.rmtree(output_folder + '/01_CanvasSized')
         print('01_CanvasSized cleared')
-    if '02_Reprojected' in os.listdir(input_folder)  and Steps['Script_03']==1:
-        shutil.rmtree(input_folder + '/02_Reprojected')
+    if '02_Reprojected' in os.listdir(output_folder)  and Steps['Script_03']==1:
+        shutil.rmtree(output_folder + '/02_Reprojected')
         print('clear 02_Reprojected')
-    if '03_Resized' in os.listdir(input_folder):
-        shutil.rmtree(input_folder + '/03_Resized')
+    if '03_Resized' in os.listdir(output_folder)  and Steps['Script_04']==1:
+        shutil.rmtree(output_folder + '/03_Resized')
         print('clear 03_Resized')
     print(' ')    
 
