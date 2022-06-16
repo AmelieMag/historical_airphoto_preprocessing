@@ -110,14 +110,15 @@ dimY = 13395
 # (minimum = 1; suggested value = (number of cores) - 1)
 # (if you don't know how many cores you have, write: 'multiprocessing.cpu_count()')
 
-num_cores = 1 # multiprocessing.cpu_count() - 1
+num_cores =  multiprocessing.cpu_count() - 1
 
 # ----------------------------------------------------------------------------
 ################################ END OF SETUP ###############################
 # ----------------------------------------------------------------------------
 
 
-def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file, camera):
+def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file, 
+                   camera,resolution_file,input_resolution):
 
     print(' ')
     print('=====================================================================')
@@ -129,25 +130,51 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file, 
     ##### DEFINE ADDITIONAL USEFUL VARIABLES #####
 
     allfiles = os.listdir(input_image_folder)
+    
     images_list = [filename for filename in allfiles if filename[-4:]
                    in [".tif", ".TIF"]]  # ,".jpg",".JPG"
     images_list = images_list + [filename for filename 
-                                 in allfiles if filename[-5:] in [".tiff", ".TIFF"]]
+                                 in allfiles if filename[-5:] in [".tiff",
+                                                                  ".TIFF"]]
 
-    FM = pd.read_csv(fiducialmarks_file, sep=CSV_Separator, header=[0])
+    FM = pd.read_csv(fiducialmarks_file, sep=CSV_Separator, header=[0]) 
     number_images = str(len(FM))
 
     ##### DISPLAY THE NUMBER OF IMAGES TO PROCESS #####
 
     print('Number of tasks (images to process): ' + number_images)
     print(' ')
+   
+    ################Amelie travail ici ##########################
+    print('------Amelie travail ici-------------------------------------------')
+    
+    # coordinate of th fiducial marks in the projection depending on the resolution
+    res_file = pd.read_csv(resolution_file, sep=';', header=[0])
+    res_col = res_file['Resolution']
+    i = res_file.loc[res_col==input_resolution].index[0]
+    FM_proj = [[res_file['Xp1'][i],res_file['Yp1'][i]],
+               [res_file['Xp2'][i],res_file['Yp2'][i]],
+               [res_file['Xp3'][i],res_file['Yp3'][i]],
+               [res_file['Xp4'][i],res_file['Yp4'][i]]]
     
     if camera == 'Wild RC5a':
-        ##### NEW COORDINATES OF FIDUCIAL MARKS #####
-        # (1 = upper left; 2 = upper right; 3 = lower right; 4 = lower left)
-        # (If the fiducial marks are at the medians: 1 = up; 2 = right; 3 = down ; 4 = left)
-        pts2 = np.float32([[673, 673], [12723, 673], [
-                          12723, 12723], [673, 12723]])
+        pts2 = np.float32(FM_proj)
+        
+    dimensionX = res_file['X ximension (pixel)'][i]
+    dimensionY = res_file['Y dimension (pixel)'][i]
+    
+    print('dimX ={}, dimY = {}'.format(dimensionX,dimensionY))
+    
+    print('--------------------------------------------------------------------')
+    
+    #############################################################
+    
+    # if camera == 'Wild RC5a':
+    #     ##### NEW COORDINATES OF FIDUCIAL MARKS #####
+    #     # (1 = upper left; 2 = upper right; 3 = lower right; 4 = lower left)
+    #     # (If the fiducial marks are at the medians: 1 = up; 2 = right; 3 = down ; 4 = left)
+    #     pts2 = np.float32([[673, 673], [12723, 673], [
+    #                       12723, 12723], [673, 12723]])
 
     # Could here add calculations for other camera systems
     # elif camera == 'Fairchild K17B':
@@ -160,8 +187,9 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file, 
     ##### PARALLEL PROCESSING #####
     
     Parallel(n_jobs=num_cores, verbose=30)(
-        delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,output_image_folder) for image in images_list)
-
+        delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
+                                    output_image_folder,dimensionX,dimensionY) for image in images_list)
+# 
     ##### END PROCESSING #####
     sleep(3)
 
@@ -172,7 +200,7 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file, 
     
 
 
-def reproject_and_crop(image,FM,pts2,images_list,input_image_folder,output_image_folder):
+def reproject_and_crop(image,FM,pts2,images_list,input_image_folder,output_image_folder,dimX,dimY):
     # Read the images, keep the original pixel depth (-1) and read its dimensions
     # os.path.splitext(os.path.basename(image))[0] + '.tif')
     dst_filename = os.path.join(input_image_folder, image)
@@ -210,5 +238,6 @@ def reproject_and_crop(image,FM,pts2,images_list,input_image_folder,output_image
 
 
 if __name__ == "__main__":
+    
     main_script_03(input_image_folder, output_image_folder,
                    fiducialmarks_file, camera)

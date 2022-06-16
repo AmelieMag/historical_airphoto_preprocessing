@@ -108,8 +108,7 @@ def main_script_04(image_folder, output_folder, scale_percent, HistoCal, Sharpen
     allfiles = os.listdir(image_folder)
     imlist = [filename for filename in allfiles if filename[-4:]
               in [".tif", ".TIF", ".png", ".jpg", ".JPG"]]
-    imlist = imlist + \
-        [filename for filename in allfiles if filename[-5:] in [".tiff", ".TIFF"]]
+    imlist = imlist + [filename for filename in allfiles if filename[-5:] in [".tiff", ".TIFF"]]
 
     resizedimlist = []
 
@@ -134,8 +133,8 @@ def main_script_04(image_folder, output_folder, scale_percent, HistoCal, Sharpen
         outfiles = os.listdir(output_folder)
         outimlist = [filename for filename in outfiles if filename[-4:]
                      in [".tif", ".TIF", ".png", ".jpg", ".JPG"]]
-        outimlist = outfiles + \
-            [filename for filename in outimlist if filename[-5:] in [".tiff", ".TIFF"]]
+        
+        outimlist = outfiles + [filename for filename in outimlist if filename[-5:] in [".tiff", ".TIFF"]]
         if len(imlist) != len(outimlist):
             print('*** WARNING ***')
             print('! it seems that some image(s) have not been processed!')
@@ -164,8 +163,7 @@ def unsharp_mask_OpenCV(image, kernel_size=(3, 3), sigma=1.0):
 # functions
 def unsharp_mask_Pillow(image, Inradius=3):
     from PIL import ImageFilter
-    sharpened = image.filter(
-        ImageFilter.UnsharpMask(radius=Inradius, percent=150))
+    sharpened = image.filter(ImageFilter.UnsharpMask(radius=Inradius, percent=150))
     return sharpened
 
 def OpenCVDownscaler(imlist, scale_percent,resizedimlist,image_folder,output_folder):

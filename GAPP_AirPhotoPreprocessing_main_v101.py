@@ -53,10 +53,10 @@ from GAPP_Script_03_AirPhoto_Reprojection_v201 import main_script_03
 from GAPP_Script_04_AirPhotos_Resize_v201 import main_script_04
 
 
-def main_script(input_folder,output_folder, template_folder, dataset, chosen_p, stripes, chosen_camera,chosen_input_res,chosen_output_res,chosen_HistoCal, chosen_SharpIntensity, Steps ):
+def main_script(input_folder,output_folder, template_folder, dataset, chosen_p, stripes, chosen_camera,resolution_file,chosen_input_res,chosen_output_res,chosen_HistoCal, chosen_SharpIntensity, Steps ):
     input_0=input_folder
     output_canvas_sized=output_folder + '/' + '01_CanvasSized'
-    output_reprojected=output_folder + '/' + '02_Reprojected'
+    output_reprojected=output_folder + '/' + '02_Reprojected_test'
     output_resized=output_folder + '/' + '03_Resized'
 
     template_0= template_folder
@@ -67,7 +67,6 @@ def main_script(input_folder,output_folder, template_folder, dataset, chosen_p, 
     fiducialmarks_file= output_canvas_sized + '/' + '_fiducial_marks_coordinates_' + dataset_0 + '.csv'
 
     scale_percent_0 = 60
-    print( scale_percent_0)
     chosen_HistoCal_0=str(chosen_HistoCal)
     chosen_SharpIntensity_0=float(chosen_SharpIntensity)
 
@@ -84,7 +83,7 @@ def main_script(input_folder,output_folder, template_folder, dataset, chosen_p, 
         main_script_02(output_canvas_sized, template_0, dataset_0, chosen_p_0, stripes_0)
     # 03_Reprojection
     if Steps['Script_03'] == 1:
-        main_script_03(output_canvas_sized, output_reprojected, fiducialmarks_file, camera)
+        main_script_03(output_canvas_sized, output_reprojected, fiducialmarks_file, camera,resolution_file,chosen_input_res)
     # 04_Resize
     if Steps['Script_04'] == 1:
         main_script_04(output_reprojected, output_resized, scale_percent_0, chosen_HistoCal_0, chosen_SharpIntensity_0)
@@ -111,13 +110,20 @@ if __name__== '__main__':
     """
 
     """test windows"""
-
+    """
     input_folder =  'D:/ENSG_internship_2022/git/test/5858_001-005/'
     output_folder = 'D:/ENSG_internship_2022/git/test/'
     fiducial_folder = 'D:/ENSG_internship_2022/git/test/fiducial_marks'
     dataset = 'Virunga_1958'
-
-
+    """
+    
+    """test teletravail"""
+    input_folder = r"C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\test\5858_001-005"
+    output_folder =  r"C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC/test/resultat/"
+    fiducial_folder = r"C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\test\fiducial_marks"
+    resolution_file = r"C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\git\historical_airphoto_preprocessing\Airphoto_Photo_dimensions_vs_dpi.csv"
+    dataset = 'Virunga_1958'
+    
     ###############################################################################
 
     ############################# Parameters ######################################
@@ -133,8 +139,8 @@ if __name__== '__main__':
     SharpIntensity = 2.0
     Steps = {'Script_01': 0,  # GAPP_Script_01_AirPhoto_CanvasSizing_v201
              'Script_02': 0,  # GAPP_Script_02_AutomaticFiducialDetection_v201
-             'Script_03': 0,  # GAPP_Script_03_AirPhoto_Reprojection_v201
-             'Script_04': 1}  # GAPP_Script_04_AirPhotos_Resize_v201
+             'Script_03': 1,  # GAPP_Script_03_AirPhoto_Reprojection_v201
+             'Script_04': 0}  # GAPP_Script_04_AirPhotos_Resize_v201
 
     ###############################################################################
 
@@ -143,9 +149,9 @@ if __name__== '__main__':
     if '01_CanvasSized' in os.listdir(output_folder) and Steps['Script_01']==1:
         shutil.rmtree(output_folder + '/01_CanvasSized')
         print('01_CanvasSized cleared')
-    if '02_Reprojected' in os.listdir(output_folder)  and Steps['Script_03']==1:
-        shutil.rmtree(output_folder + '/02_Reprojected')
-        print('clear 02_Reprojected')
+    # if '02_Reprojected' in os.listdir(output_folder)  and Steps['Script_03']==1:
+    #     shutil.rmtree(output_folder + '/02_Reprojected')
+    #     print('clear 02_Reprojected')
     if '03_Resized' in os.listdir(output_folder)  and Steps['Script_04']==1:
         shutil.rmtree(output_folder + '/03_Resized')
         print('clear 03_Resized')
@@ -154,7 +160,8 @@ if __name__== '__main__':
     # Runing main application
 
     main_script(input_folder, output_folder, fiducial_folder, dataset, p,
-      stripes, camera, input_resolution, output_resolution, choosen_HistoCal, SharpIntensity,Steps)
+      stripes, camera, resolution_file,input_resolution, output_resolution,
+      choosen_HistoCal, SharpIntensity,Steps)
 
 
 

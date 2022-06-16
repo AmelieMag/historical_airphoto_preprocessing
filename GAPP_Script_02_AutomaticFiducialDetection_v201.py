@@ -121,6 +121,7 @@ Template_Virunga_1958_top_right_1 220 220
 # folder where temporary fiducials of the images (i.e., where
 corner_folder = r"C:\Users\adille\Desktop\Tests\SCANs\Fiducials_Barriere\Luluaburg_1959\_temp_corners_Luluaburg_1959"
 # the fiducial marks are located) will be saved
+
 # parameter for ShiTomasi corner detection. 'fixed' or 'barycentre'
 type_fidu = "barycentre"
 Out_fiducialmarks_CSV = r"C:\Users\adille\Desktop\Tests\SCANs\Fiducials_Barriere\Luluaburg_1959\fiducial_marks_coordinates_Luluaburg_1959.csv"  # output with the
@@ -543,8 +544,8 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
         else:
             template_dic = {}
             for template_name in template_list:
-                template_img = cv2.imread(
-                    fiducial_template_folder + '/' + template_name)
+                template_img = cv2.imread(fiducial_template_folder +
+                                          '/' + template_name)
                 template_dic[template_name] = template_img
 
         # -------------------------------------------------------------------------------------
