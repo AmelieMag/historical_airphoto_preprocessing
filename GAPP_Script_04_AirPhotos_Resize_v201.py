@@ -68,6 +68,7 @@ see for unsharp mask in python
 import os
 import time
 from pathlib import Path
+import pandas as pd
 
 import cv2
 import numpy as np
@@ -93,7 +94,7 @@ SharpeningIntensity = 2
 # ----------------------------------------------------------------------------
 
 
-def main_script_04(image_folder, output_folder, scale_percent, HistoCal, SharpeningIntensity):
+def main_script_04(image_folder, output_folder, scale_percent, HistoCal, SharpeningIntensity,resolution_file,output_res):
 
     print(' ')
     print('=====================================================================')
@@ -124,7 +125,7 @@ def main_script_04(image_folder, output_folder, scale_percent, HistoCal, Sharpen
               '-----------------------------------------\n')
         start_time = time.time()
 
-        OpenCVDownscaler(imlist, scale_percent,resizedimlist,image_folder,output_folder)  # main
+        OpenCVDownscaler(imlist, scale_percent,resizedimlist,image_folder,output_folder,resolution_file,output_res)  # main
 
         print("\n--- data processing time was %.2f s seconds ---\n" %
               (time.time() - start_time))
@@ -161,23 +162,41 @@ def unsharp_mask_OpenCV(image, kernel_size=(3, 3), sigma=1.0):
     return sharpened
 
 # functions
+def get_resizing_settings(resolution_file,output_res):
+    res_file = pd.read_csv(resolution_file, sep=';', header=[0])
+    res_col = res_file['Resolution']
+    i = res_file.loc[res_col==output_res].index[0]
+    settings = (res_file['X ximension (pixel)'][i],res_file['Y dimension (pixel)'][i])
+    
+    print(settings)
+    
+    return settings
+
 def unsharp_mask_Pillow(image, Inradius=3):
     from PIL import ImageFilter
     sharpened = image.filter(ImageFilter.UnsharpMask(radius=Inradius, percent=150))
     return sharpened
 
-def OpenCVDownscaler(imlist, scale_percent,resizedimlist,image_folder,output_folder):
+def OpenCVDownscaler(imlist, scale_percent,resizedimlist,image_folder,output_folder,resolution_file,output_res):
     # A. Downscaling with OpenCV
     count = 1
     for image in imlist:
         print('\n >>> Image [' + str(count) + '/' +
               str(len(imlist)) + ']: ' + image)
+        
         img = cv2.imread(image_folder + '/' + image, cv2.IMREAD_UNCHANGED)
         print('     Original Dimensions : ', img.shape)
 
         width = int(img.shape[1] * scale_percent / 100)
         height = int(img.shape[0] * scale_percent / 100)
         dim = (width, height)
+        
+        ##### Amelie worked here
+        
+        dim = get_resizing_settings(resolution_file, output_res)
+        
+        ############################
+        
         # resize image
         # INTER_CUBIC is a bicubic interpolation
         resized = cv2.resize(img, dim, interpolation=cv2.INTER_CUBIC)

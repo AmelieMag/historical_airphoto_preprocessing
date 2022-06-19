@@ -100,10 +100,7 @@ name	X1	Y1	X2	Y2	X3	Y3	X4	Y4
 camera = 'Wild RC5a'  # !! Points location calculated for 'Wild RC5a' camera only for now... COuld add others e.g., 'Fairchild K17B'
 
 
-##### DIMENSIONS OF THE OUTPUT IMAGE #####
 
-dimX = 13395
-dimY = 13395
 
 #### PARALLEL PROCESSING #####
 # (Choose the number of CPU cores you want to use)
@@ -148,33 +145,38 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
     ################Amelie travail ici ##########################
     print('------Amelie travail ici-------------------------------------------')
     
-    # coordinate of th fiducial marks in the projection depending on the resolution
-    res_file = pd.read_csv(resolution_file, sep=';', header=[0])
-    res_col = res_file['Resolution']
-    i = res_file.loc[res_col==input_resolution].index[0]
-    FM_proj = [[res_file['Xp1'][i],res_file['Yp1'][i]],
-               [res_file['Xp2'][i],res_file['Yp2'][i]],
-               [res_file['Xp3'][i],res_file['Yp3'][i]],
-               [res_file['Xp4'][i],res_file['Yp4'][i]]]
+    #### New coordinate of fiducial Marks depending on the resolution
+    # res_file = pd.read_csv(resolution_file, sep=';', header=[0])
+    # res_col = res_file['Resolution']
+    # i = res_file.loc[res_col==input_resolution].index[0]
+    # FM_proj = [[res_file['Xp1'][i],res_file['Yp1'][i]],
+    #            [res_file['Xp2'][i],res_file['Yp2'][i]],
+    #            [res_file['Xp3'][i],res_file['Yp3'][i]],
+    #            [res_file['Xp4'][i],res_file['Yp4'][i]]]
     
-    if camera == 'Wild RC5a':
-        pts2 = np.float32(FM_proj)
+    # if camera == 'Wild RC5a':
+    #     pts2 = np.float32(FM_proj)
         
-    dimensionX = res_file['X ximension (pixel)'][i]
-    dimensionY = res_file['Y dimension (pixel)'][i]
+    ##### DIMENSIONS OF THE OUTPUT IMAGE #####
+
+    dimX = 13395
+    dimY = 13395
+        
+    # dimensionX = res_file['X ximension (pixel)'][i]
+    # dimensionY = res_file['Y dimension (pixel)'][i]
     
-    print('dimX ={}, dimY = {}'.format(dimensionX,dimensionY))
+    # print('dimX ={}, dimY = {}'.format(dimensionX,dimensionY))
     
     print('--------------------------------------------------------------------')
     
     #############################################################
     
-    # if camera == 'Wild RC5a':
-    #     ##### NEW COORDINATES OF FIDUCIAL MARKS #####
-    #     # (1 = upper left; 2 = upper right; 3 = lower right; 4 = lower left)
-    #     # (If the fiducial marks are at the medians: 1 = up; 2 = right; 3 = down ; 4 = left)
-    #     pts2 = np.float32([[673, 673], [12723, 673], [
-    #                       12723, 12723], [673, 12723]])
+    if camera == 'Wild RC5a':
+        ##### NEW COORDINATES OF FIDUCIAL MARKS #####
+        # (1 = upper left; 2 = upper right; 3 = lower right; 4 = lower left)
+        # (If the fiducial marks are at the medians: 1 = up; 2 = right; 3 = down ; 4 = left)
+        pts2 = np.float32([[673, 673], [12723, 673], [
+                          12723, 12723], [673, 12723]])
 
     # Could here add calculations for other camera systems
     # elif camera == 'Fairchild K17B':
@@ -186,10 +188,12 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
     ##### PROCESSING WORKFLOW #####
     ##### PARALLEL PROCESSING #####
     
-    Parallel(n_jobs=num_cores, verbose=30)(
-        delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
-                                    output_image_folder,dimensionX,dimensionY) for image in images_list)
-# 
+    # Parallel(n_jobs=num_cores, verbose=30)(
+    #     delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
+    #                                 output_image_folder,dimensionX,dimensionY) for image in images_list)
+    Parallel(n_jobs=num_cores, verbose=30)(delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
+                                output_image_folder,dimX,dimY) for image in images_list)
+
     ##### END PROCESSING #####
     sleep(3)
 

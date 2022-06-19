@@ -680,7 +680,8 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                         Coord[corner] = [
                                             best['u1'], best['v1']]
                                         fidu_coordinates = fidu_coordinates.append(
-                                            {'image': image_name, 'corner': corner, 'template': template_name, 'xc': xc,
+                                            {'image': image_name, 'corner': corner,
+                                             'template': template_name, 'xc': xc,
                                              'yc': yc, 'u1': best['u1'], 'v1': best['v1'],
                                              'maxVal': best['maxVal']},
                                             ignore_index=True)
@@ -690,12 +691,11 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                     # create folder if does no exist
                                     Path(save_folder_path).mkdir(
                                         parents=True, exist_ok=True)
-                                    plt.savefig(
-                                        save_folder_path + '/_ToCheck_' + image_name + '_'+corner + '.png', dpi=DPI)
+                                    plt.savefig(save_folder_path + '/_ToCheck_' + image_name + '_'+corner + '.png', dpi=DPI)
 
                         if len(Coord) == 4 and template_name == template_list[-1] and corner == list(F.keys())[-1]:
-                            print(
-                                "  >> " + image_name + ' > found for fiducial coordinates: ' + str(Coord))
+                            print("  >> " + image_name + ' > found for fiducial coordinates: ' + str(Coord))
+                            
                             # Add to CSV file
                             addLine(image_name, Coord, Out_fiducialmarks_CSV)
 
