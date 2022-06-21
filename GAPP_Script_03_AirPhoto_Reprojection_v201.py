@@ -142,28 +142,30 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
     print('Number of tasks (images to process): ' + number_images)
     print(' ')
    
-    ################Amelie travail ici ##########################
+    ################ Amelie travail ici ##########################
     print('------Amelie travail ici-------------------------------------------')
     
-    #### New coordinate of fiducial Marks depending on the resolution
-    # res_file = pd.read_csv(resolution_file, sep=';', header=[0])
-    # res_col = res_file['Resolution']
-    # i = res_file.loc[res_col==input_resolution].index[0]
-    # FM_proj = [[res_file['Xp1'][i],res_file['Yp1'][i]],
-    #            [res_file['Xp2'][i],res_file['Yp2'][i]],
-    #            [res_file['Xp3'][i],res_file['Yp3'][i]],
-    #            [res_file['Xp4'][i],res_file['Yp4'][i]]]
+    ### New coordinate of fiducial Marks depending on the resolution
     
-    # if camera == 'Wild RC5a':
-    #     pts2 = np.float32(FM_proj)
+    
+    
+    res_file = pd.read_csv(resolution_file, sep=';', header=[0])
+    res_col = res_file['Resolution']
+    i = res_file.loc[res_col==input_resolution].index[0]
+    FM_proj = [[res_file['Xp1'][i],res_file['Yp1'][i]],
+                [res_file['Xp2'][i],res_file['Yp2'][i]],
+                [res_file['Xp3'][i],res_file['Yp3'][i]],
+                [res_file['Xp4'][i],res_file['Yp4'][i]]]
+    
+    pts2 = np.float32(FM_proj)
         
     ##### DIMENSIONS OF THE OUTPUT IMAGE #####
 
-    dimX = 13395
-    dimY = 13395
+    # dimX = 13395
+    # dimY = 13395
         
-    # dimensionX = res_file['X ximension (pixel)'][i]
-    # dimensionY = res_file['Y dimension (pixel)'][i]
+    dimensionX = res_file['X ximension (pixel)'][i]
+    dimensionY = res_file['Y dimension (pixel)'][i]
     
     # print('dimX ={}, dimY = {}'.format(dimensionX,dimensionY))
     
@@ -171,12 +173,12 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
     
     #############################################################
     
-    if camera == 'Wild RC5a':
-        ##### NEW COORDINATES OF FIDUCIAL MARKS #####
-        # (1 = upper left; 2 = upper right; 3 = lower right; 4 = lower left)
-        # (If the fiducial marks are at the medians: 1 = up; 2 = right; 3 = down ; 4 = left)
-        pts2 = np.float32([[673, 673], [12723, 673], [
-                          12723, 12723], [673, 12723]])
+    # if camera == 'Wild RC5a':
+    #     ##### NEW COORDINATES OF FIDUCIAL MARKS #####
+    #     # (1 = upper left; 2 = upper right; 3 = lower right; 4 = lower left)
+    #     # (If the fiducial marks are at the medians: 1 = up; 2 = right; 3 = down ; 4 = left)
+    #     pts2 = np.float32([[673, 673], [12723, 673], [
+    #                       12723, 12723], [673, 12723]])
 
     # Could here add calculations for other camera systems
     # elif camera == 'Fairchild K17B':
@@ -188,11 +190,11 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
     ##### PROCESSING WORKFLOW #####
     ##### PARALLEL PROCESSING #####
     
-    # Parallel(n_jobs=num_cores, verbose=30)(
-    #     delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
-    #                                 output_image_folder,dimensionX,dimensionY) for image in images_list)
-    Parallel(n_jobs=num_cores, verbose=30)(delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
-                                output_image_folder,dimX,dimY) for image in images_list)
+    Parallel(n_jobs=num_cores, verbose=30)(
+        delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
+                                    output_image_folder,dimensionX,dimensionY) for image in images_list)
+    # Parallel(n_jobs=num_cores, verbose=30)(delayed(reproject_and_crop)(image,FM,pts2,images_list,input_image_folder,
+    #                             output_image_folder,dimX,dimY) for image in images_list)
 
     ##### END PROCESSING #####
     sleep(3)
