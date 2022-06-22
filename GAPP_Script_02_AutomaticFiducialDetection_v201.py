@@ -734,12 +734,12 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
 def parameters_02(input_image_folder, fiducial_template_folder, dataset):
 
     # text file where the centre of the template is indicated
-    center_fidu_tempate_CSV = fiducial_template_folder + "/Center_Fiduciales.txt"
+    center_fidu_tempate_CSV =  "{}/Center_Fiduciales.txt".format(fiducial_template_folder)
     # folder where temporary fiducials of the images will be saved
-    corner_folder = os.path.dirname(input_image_folder + '/' + '_temp_fiducials')
+    corner_folder = os.path.dirname('{}/_temp_fiducials'.format(input_image_folder))
     # parameter for ShiTomasi corner detection. 'fixed' or 'barycentre'
     type_fidu = "barycentre"
-    Out_fiducialmarks_CSV = input_image_folder + '/' + '_fiducial_marks_coordinates_' + dataset + '.csv'
+    Out_fiducialmarks_CSV = '{}/_fiducial_marks_coordinates_{}.csv'.format(input_image_folder,dataset)
 
     # to run using parallel processing (otherwise will process one image after the other
     RunParallel = False
@@ -779,9 +779,7 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
             = parameters_02(image_folder, fiducial_template_folder, dataset)
 
     print("\n"
-          "corner folder: " + corner_folder +
-          "\nOut_fiducialmarks_CSV: " + Out_fiducialmarks_CSV +
-          "\ncenter_fidu_tempate_CSV: " + center_fidu_tempate_CSV)
+          "corner folder: {}\nOut_fiducialmarks_CSV: {}\ncenter_fidu_tempate_CSV: {}".format(corner_folder,Out_fiducialmarks_CSV,center_fidu_tempate_CSV))
 
     ##### PARALLEL PROCESSING #####
 
@@ -795,14 +793,13 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     allfiles = os.listdir(image_folder)
     imlist = [filename for filename in allfiles if filename[-4:]
               in [".tif", ".TIF", ".jpg", ".JPG"]]
-    imlist = imlist + \
-        [filename for filename in allfiles if filename[-5:] in [".tiff", ".TIFF"]]
+    imlist = imlist + [filename for filename in allfiles if filename[-5:] in [".tiff", ".TIFF"]]
 
     print('\n-------------------------------'
           '\n-------------------------------\n'
-          ' > found ' + str(len(imlist)) + ' images to process'
+          ' > found {} images to process'
           '\n-------------------------------'
-          '\n-------------------------------\n')
+          '\n-------------------------------\n'.format( str(len(imlist))))
 
     # Main
     if RunParallel is True:
@@ -814,24 +811,23 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     else:
         count = 1
         for image in imlist:
-            print('\n >>> Image [' + str(count) + '/' +
-                  str(len(imlist)) + ']: ' + image)
-            Main(image_folder, image, S, p, Fiducial_type, black_stripe_location, type_fidu, dataset, fiducial_template_folder,
-                 corner_folder, Out_fiducialmarks_CSV, center_fidu_tempate_CSV)
+            print('\n >>> Image [{}/{}]: {}'.format(str(count),str(len(imlist)),image))
+            Main(image_folder, image, S, p, Fiducial_type, black_stripe_location,
+                 type_fidu, dataset, fiducial_template_folder,corner_folder,
+                 Out_fiducialmarks_CSV, center_fidu_tempate_CSV)
             count = count + 1
 
     # print list of image corners to check (uncertainties in the template matching)
-    if os.path.isfile(Out_fiducialmarks_CSV[:-4] + '_TobeChecked.csv'):
+    if os.path.isfile('{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4])):
         ToBeChecked_O2 = pd.read_csv(
-            Out_fiducialmarks_CSV[:-4] + '_TobeChecked.csv')  # append
+             '{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4]))  # append
         print("\n-------------------------------------------------------------------------\n "
               "image corners to to check")
         print(ToBeChecked_O2)
 
     print("\n-------------------------------------------------------------------------\n"
-          '>>>>> fiducial coordinates saved to: ' + Out_fiducialmarks_CSV)
-    print("\nYou can have a visual look at the detected fiducials in the folder: " +
-          corner_folder + '/_all_fiducials')
+          '>>>>> fiducial coordinates saved to: {}'.format( Out_fiducialmarks_CSV))
+    print("\nYou can have a visual look at the detected fiducials in the folder:{}/_all_fiducials".format(corner_folder))
 
 
 if __name__ == "__main__":

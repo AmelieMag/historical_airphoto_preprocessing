@@ -44,9 +44,9 @@ from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
-import sys
+import sys, os
 from functools import partial
-
+import pandas as pd
 
 sys.path.insert(0, '') # Local imports
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     # Dataset
     label_dataset = tk.Label(root, text="   Dataset name:").grid(row=13, columnspan=2, sticky="w")
-    dataset = tk.StringVar(root, value='Virunga_1958')
+    dataset = tk.StringVar(root, value='WRC10')
     entry_dataset = tk.Entry(root, textvariable=dataset)
     entry_dataset.grid(row=14, column=1,columnspan=2, sticky="nsew")
 
@@ -151,25 +151,46 @@ if __name__ == "__main__":
     entry_stripes.grid(row=19, column=1,columnspan=2, sticky="nsew")
 
     # camera
-    camera_value_list = ["Wild RC5a","Wild RC10"] # other camera could be added here. Values should then be adapted in Script_03_AirPhoto_Reprojection_v102_GAPP.py
+    
+    def resolution_list(camera):
+        #this function changes the list of resolution depending on the choosen camera
+        # remove current list
+        entry_input_res['menu'].delete(0, 'end')
+        entry_ouput_res['menu'].delete(0, 'end')
+        
+        # select file
+        absFilePath = os.path.abspath(__file__)
+        path, filename = os.path.split(absFilePath)
+        resolution_file = r"{}/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,camera)
+        res_file = pd.read_csv(resolution_file, sep=';', header=[0])
+        res_col = res_file['Resolution']  
+        res_list = res_col.tolist()
+        
+        # # Insert list of new options (tk._setit hooks them up to var)
+        for choice in res_list:
+            entry_input_res['menu'].add_command(label=choice, command=tk._setit(chosen_input_res, choice))
+            entry_ouput_res['menu'].add_command(label=choice, command=tk._setit(chosen_output_res, choice))
+    
+        
+    camera_value_list = ["Wild_RC10","Wild_RC5a"] # other camera could be added here. Values should then be adapted in Script_03_AirPhoto_Reprojection_v102_GAPP.py
     labelcamera = tk.Label(root, text=" Camera system:").grid(row=21, column=1, sticky="w")
     chosen_camera= tk.StringVar(root)
-    chosen_camera.set(camera_value_list[0]) # by default
-    entry_camera = tk.OptionMenu(root, chosen_camera, *camera_value_list)
+    chosen_camera.set("Choose a camera") # by default
+    entry_camera = tk.OptionMenu(root, chosen_camera, *camera_value_list, command=resolution_list)
     entry_camera.grid(row=22, column=1, sticky="nsew")
 
     # resolution
-    resolution_value_list = ["300","400","600","800","900","1200","1500","1600","1800"]
+    # resolution_value_list = ["300","400","600","800","900","1200","1500","1600","1800"]
     label_input_res = tk.Label(root, text=" Input scan resolution:").grid(row=23, column=1, sticky="w")
     chosen_input_res= tk.StringVar(root)
-    chosen_input_res.set(resolution_value_list[7]) # by default
-    entry_input_res = tk.OptionMenu(root, chosen_input_res, *resolution_value_list)
+    chosen_input_res.set("Choose input resolution") # by default
+    entry_input_res = tk.OptionMenu(root, chosen_input_res, *["choose a camera"])
     entry_input_res.grid(row=24, column=1, sticky="nsew")
 
     label_output_res = tk.Label(root, text=" Output scan resolution:").grid(row=23, column=2, sticky="w")
     chosen_output_res = tk.StringVar(root)
-    chosen_output_res.set(resolution_value_list[4])  # by default
-    entry_ouput_res = tk.OptionMenu(root, chosen_output_res, *resolution_value_list)
+    chosen_output_res.set("Choose input resolution")  # by default
+    entry_ouput_res = tk.OptionMenu(root, chosen_output_res, *["choose a camera"])
     entry_ouput_res.grid(row=24, column=2, sticky="nsew")
 
     # Histogram calibration
@@ -210,7 +231,7 @@ if __name__ == "__main__":
         e.insert(0, root.filename)
         template_folder.append(path)
 
-
+    
 
     #Initialize Buttons:
     input_folder = []
@@ -220,9 +241,6 @@ if __name__ == "__main__":
     check_02 = tk.IntVar()
     check_03 = tk.IntVar()
     check_04 = tk.IntVar()
-    
-    Steps = [check_01.get(),check_02.get(),check_03.get(),check_04.get()]
-    
     
     c = ttk.Checkbutton(root, text="Script_01: Canvas Sizing", variable=check_01).grid(row=31,column=1, sticky="w")
     c = ttk.Checkbutton(root, text="Script_02: Fiducial Detection", variable=check_02).grid(row=31,column=2, sticky="w")
@@ -241,10 +259,7 @@ if __name__ == "__main__":
                           dataset, chosen_p, stripes, chosen_camera,chosen_input_res,
                           chosen_output_res,chosen_HistoCal, chosen_SharpIntensity,
                           check_01,check_02,check_03,check_04)
-    def p(x):
-        print(x)
-        
-    tri = partial(p,Steps)
+    
     buttonRun = ttk.Button(root, text="Run", style='Accent.TButton', command=main_script).grid(row=34,column=7,columnspan = 6, sticky="nsew")
 
 
@@ -258,7 +273,7 @@ if __name__ == "__main__":
     root.rowconfigure(9, {'minsize': 30})
     root.columnconfigure(9, {'minsize': 30})
     root.geometry(str(700) + "x" + str(800))  # defined a window size to be sure it doesn't change over time
-    root.resizable(width=TRUE, height=TRUE)
+    root.resizable(width=tk.TRUE, height=tk.TRUE)
 
     # End of interface
 

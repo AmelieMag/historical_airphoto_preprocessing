@@ -31,13 +31,14 @@ from pathlib import Path
 ################################    SETUP     ################################
 # ----------------------------------------------------------------------------
 # input parameters
-image4template_path=r"C:\Users\adille\Desktop\Tests\SCANs\_Tests_GAPP\Aerial_Images_Original\5968_Bande-17-083-109\5968_Bande-17-083.tiff"
-fiducialCenters={'top_left': [745, 878], 'top_right': [11054, 783], 'bot_right': [11076, 11257],'bot_left': [781, 11356]} #manual coordinates
+image4template_path=r"D:\ENSG_internship_2022\git\testWRC10\Bande_9_8-778_8-799\Bande_9_8-778.tif"
+fiducialCenters={'top_left': [815, 924], 'top_right': [13509, 931], 
+                 'bot_right': [13473, 13433],'bot_left': [855, 13420]} #manual coordinates
 
 
-halfwidth=240 #half width (in pixels) required to cover the entirety of the fiducial mark
-output_template_folder=r'C:\Users\adille\Desktop\Tests\SCANs\_Tests_GAPP\Fiducial_templates_Luluaburg_1959' # folder where the fiducial template will be saved
-dataset='Luluaburg_1959' # image dataset name (e.g., 'Virunga_1958')
+halfwidth=120 #half width (in pixels) required to cover the entirety of the fiducial mark
+output_template_folder=r'D:\ENSG_internship_2022\git\testWRC10\fiducial_marks' # folder where the fiducial template will be saved
+dataset='WRC10' # image dataset name (e.g., 'Virunga_1958')
 # Fiducial_type='target'
 
 # ----------------------------------------------------------------------------
@@ -53,8 +54,14 @@ img4template=cv2.imread(image4template_path, cv2.IMREAD_UNCHANGED)
 corner_list=['top_left', 'top_right', 'bot_right','bot_left']
 
 fiducialCenters_images={}
-fiducialCenters_images['top_left'] = [img4template[fiducialCenters['top_left'][1]-halfwidth:fiducialCenters['top_left'][1]+halfwidth,
-                                      fiducialCenters['top_left'][0]-halfwidth:fiducialCenters['top_left'][0]+halfwidth]][0]
+
+fiducialCenters_images['top_left'] = [img4template[fiducialCenters['top_left'][1]-
+                                                   halfwidth:fiducialCenters['top_left'][1]+
+                                                   halfwidth,
+                                                   fiducialCenters['top_left'][0]-
+                                                   halfwidth:fiducialCenters['top_left'][0]+
+                                                   halfwidth]][0]
+
 fiducialCenters_images['top_right'] = [img4template[fiducialCenters['top_right'][1]-halfwidth:fiducialCenters['top_right'][1]+halfwidth,
                                       fiducialCenters['top_right'][0]-halfwidth:fiducialCenters['top_right'][0]+halfwidth]][0]
 fiducialCenters_images['bot_right'] = [img4template[fiducialCenters['bot_right'][1]-halfwidth:fiducialCenters['bot_right'][1]+halfwidth,

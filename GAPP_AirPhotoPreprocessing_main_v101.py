@@ -76,9 +76,9 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
         DESCRIPTION.
     chosen_camera : string
         DESCRIPTION.
-    chosen_input_res : TYPE
+    chosen_input_res : int
         resolution of photo.
-    chosen_output_res : TYPE
+    chosen_output_res : int
         resolution expected for the output photos.
     chosen_HistoCal : TYPE
         DESCRIPTION.
@@ -100,37 +100,55 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
     None.
 
     """
-    
+        
     input_0 = input_folder
-    if __name__ != '__main__':        
-        input_0 = input_folder[0]
-        output_folder = output_folder[0]
-        Steps = {'Script_01': S1.get(), 'Script_02': S2.get(), 
-                 'Script_03': S3.get(), 'Script_04':S4.get()}
-    
-    output_canvas_sized = '{}/{}'.format(output_folder, '01_CanvasSized')
-    output_reprojected ='{}/{}'.format( output_folder ,'02_Reprojected')
-    output_resized ='{}/{}'.format( output_folder , '03_Resized_test')
     
     template_0 = template_folder
     dataset_0 = dataset
     chosen_p_0 = float(chosen_p)
     stripes_0 = stripes
     camera = str(chosen_camera)
-    fiducialmarks_file = '{}/_fiducial_marks_coordinates_{}.csv'.format(output_canvas_sized,dataset_0)
 
     scale_percent_0 = 60
     chosen_HistoCal_0 = str(chosen_HistoCal)
     chosen_SharpIntensity_0 = float(chosen_SharpIntensity)
+    
+    if __name__ != '__main__':        
+        input_0 = input_folder[0]
+        output_folder = output_folder[0]
+        print('output folder = {}'.format(output_folder))
+        Steps = {'Script_01': S1.get(), 'Script_02': S2.get(), 
+                 'Script_03': S3.get(), 'Script_04':S4.get()}
+        template_0 = template_folder[0]
+        dataset_0 = dataset.get()
+        chosen_p_0 = float(chosen_p)
+        stripes_0 = stripes.get()
+        camera = str(chosen_camera.get())
+        chosen_input_res = int(chosen_input_res.get())
+        chosen_output_res = int(chosen_output_res.get())
+        
+    
+    output_canvas_sized = '{}/{}'.format(output_folder, '01_CanvasSized')
+    output_reprojected ='{}/{}'.format( output_folder ,'02_Reprojected')
+    output_resized ='{}/{}'.format( output_folder , '03_Resized_test')
+    
+    fiducialmarks_file = '{}/_fiducial_marks_coordinates_{}.csv'.format(output_canvas_sized,dataset_0)
        
+    
+    
+    # Get the path of the file where the script is located
+    absFilePath = os.path.abspath(__file__)
+    path, filename = os.path.split(absFilePath)
+    print("Script file path is {}, filename is {}".format(path, filename))
+    
     # select the resolution file corresponding to the good camera
     if camera =="Wild RC5a":
-        resolution_file = r"C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\git\historical_airphoto_preprocessing\Wild_RC5a_Airphoto_Photo_dimensions_vs_dpi.csv"
+        resolution_file = r"{}/Wild_RC5_Airphoto_Photo_dimensions_vs_dpi.csv".format(path)
     if camera == "Wild RC10":
-        resolution_file = r"C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\git\historical_airphoto_preprocessing\Wild_RC10_Airphoto_Photo_dimensions_vs_dpi.csv"
-    
-    print('input_folder = {}'.format(input_folder))
-    
+        resolution_file = r"{}/Wild_RC10_Airphoto_Photo_dimensions_vs_dpi.csv".format(path)
+        
+    print('01_CanvasSized' in os.listdir(output_folder))
+    print(Steps['Script_01'] == 1)
     if '01_CanvasSized' in os.listdir(output_folder) and Steps['Script_01'] == 1:
         shutil.rmtree('{}/01_CanvasSized'.format(output_folder))
         print('01_CanvasSized cleared')

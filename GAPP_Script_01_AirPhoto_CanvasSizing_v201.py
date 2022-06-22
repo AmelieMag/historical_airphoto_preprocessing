@@ -52,7 +52,7 @@ Log:
 
 import os
 from PIL import Image
-Image.MAX_IMAGE_PIXELS = 300000000
+Image.MAX_IMAGE_PIXELS = 30000000000
 import numpy as np
 import cv2
 from joblib import Parallel, delayed
@@ -82,6 +82,7 @@ def main_script_01(input_image_folder, output_image_folder):
     print('=  Version 2.0.1 (December 2021)  |  B. Smets/A. Dille (RMCA/VUB)   =')
     print('=====================================================================')
     print(' ')
+    
 
     os.chdir(input_image_folder)
     ### Define the list of images and count the number of files to process ###
@@ -105,6 +106,7 @@ def main_script_01(input_image_folder, output_image_folder):
     # images_list = images_list + [filename for filename in allfiles if filename[-5:] in [".tiff", ".TIFF"]]
 
     print('Number of images to process: ' + str(len(images_list)))
+    print(images_list)
     print(' ')
 
     ### Detect the max width and height in the dataset ###

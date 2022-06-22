@@ -75,31 +75,8 @@ import multiprocessing
 from time import sleep
 from pathlib import Path
 
-# ----------------------------------------------------------------------------
-################################    SETUP     ################################
-# ----------------------------------------------------------------------------
 
-# DIRECTORY PATHS ##### (for Windows paths, please use "//" between directories ; for Mac, simply use "/" between directories)
-
-input_image_folder = r"E:\Adille-Data\RESIST\GIS\Optical_Imagery\Aerial_Photographs_Bukavu_1958-59\Aerial_Pictures\Bukavu_1959_CC\CanvasSized_02"
-
-fiducialmarks_file = r"C:\Users\adille\Desktop\Tests\SCANs\Fiducials_Barriere\Bukavu_1959\fiducial_marks_coordinates_Bukavu_1959.csv"
-CSV_Separator = ';'  # separator for columns in csv files (e.g., ',' or ';')
-
-output_image_folder = r"E:\Adille-Data\RESIST\GIS\Optical_Imagery\Aerial_Photographs_Bukavu_1958-59\Aerial_Pictures\Bukavu_1959_CC\CanvasSized_02\Reprojected"
-
-
-'''
-fiducialmarks_file.csv example:
-
-name	X1	Y1	X2	Y2	X3	Y3	X4	Y4
-5942_005_CC_CanvasSized.tif	636	916	10383	766	10469	10424	730	10580
-5968_Bande-19-072_CanvasSized.tiff	727	750	11218	699	11175	11003	722	11061
-
-'''
-camera = 'Wild RC5a'  # !! Points location calculated for 'Wild RC5a' camera only for now... COuld add others e.g., 'Fairchild K17B'
-
-
+import shutil
 
 
 #### PARALLEL PROCESSING #####
@@ -107,11 +84,9 @@ camera = 'Wild RC5a'  # !! Points location calculated for 'Wild RC5a' camera onl
 # (minimum = 1; suggested value = (number of cores) - 1)
 # (if you don't know how many cores you have, write: 'multiprocessing.cpu_count()')
 
-num_cores =  multiprocessing.cpu_count() - 1
+num_cores =  1 # multiprocessing.cpu_count() - 1
 
-# ----------------------------------------------------------------------------
-################################ END OF SETUP ###############################
-# ----------------------------------------------------------------------------
+
 
 
 def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file, 
@@ -134,7 +109,7 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
                                  in allfiles if filename[-5:] in [".tiff",
                                                                   ".TIFF"]]
 
-    FM = pd.read_csv(fiducialmarks_file, sep=CSV_Separator, header=[0]) 
+    FM = pd.read_csv(fiducialmarks_file, sep=';', header=[0]) 
     number_images = str(len(FM))
 
     ##### DISPLAY THE NUMBER OF IMAGES TO PROCESS #####
@@ -147,10 +122,8 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
     
     ### New coordinate of fiducial Marks depending on the resolution
     
-    
-    
     res_file = pd.read_csv(resolution_file, sep=';', header=[0])
-    res_col = res_file['Resolution']
+    res_col = res_file['Resolution']    
     i = res_file.loc[res_col==input_resolution].index[0]
     FM_proj = [[res_file['Xp1'][i],res_file['Yp1'][i]],
                 [res_file['Xp2'][i],res_file['Yp2'][i]],
@@ -245,5 +218,40 @@ def reproject_and_crop(image,FM,pts2,images_list,input_image_folder,output_image
 
 if __name__ == "__main__":
     
+    # ----------------------------------------------------------------------------
+    ################################    SETUP     ################################
+    # ----------------------------------------------------------------------------
+
+    # DIRECTORY PATHS ##### (for Windows paths, please use "//" between directories ; for Mac, simply use "/" between directories)
+
+    input_image_folder = r"D:\ENSG_internship_2022\git\testWRC10\01_CanvasSized"
+
+    fiducialmarks_file = r"D:\ENSG_internship_2022\git\testWRC10\01_CanvasSized\_fiducial_marks_coordinates_WRC10.csv"
+    CSV_Separator = ';'  # separator for columns in csv files (e.g., ',' or ';')
+
+    output_image_folder = r"D:\ENSG_internship_2022\git\testWRC10\Reprojected"
+
+    if 'Reprojected' in os.listdir(input_image_folder) :
+        shutil.rmtree('{}/Reprojected'.format(input_image_folder))
+        print('_________cleared___________')
+
+    '''
+    fiducialmarks_file.csv example:
+
+    name	X1	Y1	X2	Y2	X3	Y3	X4	Y4
+    5942_005_CC_CanvasSized.tif	636	916	10383	766	10469	10424	730	10580
+    5968_Bande-19-072_CanvasSized.tiff	727	750	11218	699	11175	11003	722	11061
+
+    '''
+    camera = 'Wild RC510'  # !! Points location calculated for 'Wild RC5a' camera only for now... COuld add others e.g., 'Fairchild K17B'
+
+
+    resolution_file = r'D:\ENSG_internship_2022\git\historical_airphoto_preprocessing\Wild_RC5_Airphoto_Photo_dimensions_vs_dpi.csv'
+    input_resolution = 1600
+
+    # ----------------------------------------------------------------------------
+    ################################ END OF SETUP ###############################
+    # ----------------------------------------------------------------------------
+    
     main_script_03(input_image_folder, output_image_folder,
-                   fiducialmarks_file, camera)
+                   fiducialmarks_file, camera,resolution_file,input_resolution)
