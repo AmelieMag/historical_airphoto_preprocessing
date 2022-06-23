@@ -14,34 +14,39 @@ import numpy as np
 # ------------------------------------------------------------------------------
 
 camera_name = 'wild_test'
-resolution = [1500, 1400]
-total_lenth = [10630, 9921]
-lenth_FM = [9744, 9094]
+
+resolution_high = 2400
+resolution_low = 900
+
+lenth_u_x =18
+FMx = 16.5
+
+lenth_u_y =18
+FMy = 16.5
+
+unity = "cm"
 
 # ------------------------------------------------------------------------------
 ############################## END OF SETUP ###################################
 # ------------------------------------------------------------------------------
 
 
-def add_camera(camera, res, tot_l, l_FM):
+def add_camera(camera, resh, resl, Lux,Luy,FMux,FMuy,u):
 
+    
     if __name__ != "__main__":
 
         # getting the variable from interface
+        
+        print(FMux,FMux.get())
         camera = camera.get()
-        resolution = []
-        lenth_tot = []
-        FMs = []
-        for r in res:
-            resolution.append(r.get())
-        for t in tot_l:
-            lenth_tot.append(t.get())
-        for f in l_FM:
-            FMs.append(f.get())
-
-        res = resolution
-        tot_l = lenth_tot
-        l_FM = FMs
+        resh =resh.get()
+        resl = resl.get()
+        Lux = Lux.get()
+        Luy = Luy.get()
+        FMux = FMux.get()
+        FMuy = FMuy.get()
+        u = u.get()
 
     # get path and name of the script
     path, filename = os.path.split(os.path.abspath(__file__))
@@ -51,37 +56,79 @@ def add_camera(camera, res, tot_l, l_FM):
     with open(r"{}/camera.txt".format(path), "a") as f:
         f.write(L)
 
+    # conversion
+    
+    # list resolution 
+    
+    res = []
+    for r in range(resl,resh+100,100):
+        res.append(r)
+    
+    # res = np.array(res)
+    lpx = []
+    lpy = []
+    
+    FMpx = []
+    FMpy = []
+    
+    if u == "inche":
+        for i in range( len(res)):
+            lpx.append(round(Lux*res[i]))
+            lpy.append(round(Luy*res[i]))
+            
+            FMpx.append(round(FMux*res[i]))
+            FMpy.append(round(FMuy*res[i]))
+            
+    elif u =="cm":
+        for i in range( len(res)):
+            lpx.append(round((Lux/2.54)*res[i]))
+            lpy.append(round((Luy/2.54)*res[i]))
+            
+            FMpx.append(round((FMux/2.54)*res[i]))
+            FMpy.append(round((FMuy/2.54)*res[i]))
+            
+            
+        
+    lpx = np.array(lpx)
+    FMpx = np.array(FMpx)
+    
+    lpy = np.array(lpy)
+    FMpy = np.array(FMpy)
+
+    # calculating the coordinate of fiducial marks in pixels
+    fm_centerx = (lpx - FMpx)/2
+    fm_CENTERx = fm_centerx + FMpx
+    
+    fm_centery = (lpy - FMpy)/2
+    fm_CENTERy = fm_centery + FMpy
+
+    fm_centerx = [int(i) for i in fm_centerx]
+    fm_CENTERx = [int(i) for i in fm_CENTERx]
+    
+    fm_centery = [int(i) for i in fm_centery]
+    fm_CENTERy = [int(i) for i in fm_CENTERy]
+
     # creating csv with pandas
-
-    tot_l = np.array(tot_l)
-    l_FM = np.array(l_FM)
-
-    # calculating the coordinate of fiducial marks
-    fm_center = (tot_l - l_FM)/2
-    fm_CENTER = fm_center + l_FM
-
-    fm_center = [int(i) for i in fm_center]
-    fm_CENTER = [int(i) for i in fm_CENTER]
-
     file = pd.DataFrame({"Resolution": pd.Series(res),
-                         "X ximension (pixel)": pd.Series(tot_l),
-                         "Y dimension (pixel)": pd.Series(tot_l),
-                         "X distance between FM": pd.Series(l_FM),
-                         "Y distance between FM": pd.Series(l_FM),
-                         "Xp1": fm_center,
-                         "Yp1": fm_center,
-                         "Xp2": fm_CENTER,
-                         "Yp2": fm_center,
-                         "Xp3": fm_CENTER,
-                         "Yp3": fm_CENTER,
-                         "Xp4": fm_center,
-                         "Yp4": fm_CENTER,
+                         "X ximension (pixel)": pd.Series(lpx),
+                         "Y dimension (pixel)": pd.Series(lpy),
+                         "X distance between FM": pd.Series(FMpx),
+                         "Y distance between FM": pd.Series(FMpy),
+                         "Xp1": fm_centerx,
+                         "Yp1": fm_centery,
+                         "Xp2": fm_CENTERx,
+                         "Yp2": fm_centery,
+                         "Xp3": fm_CENTERx,
+                         "Yp3": fm_CENTERy,
+                         "Xp4": fm_centerx,
+                         "Yp4": fm_CENTERy,
                          })
 
     # creating csv with ";" as separator
-    file.to_csv("{}/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,
-                camera), sep=';', index=False)
+    # file.to_csv("{}/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,
+                # camera), sep=';', index=False)
+    print(file)
 
 
 if __name__ == "__main__":
-    add_camera(camera_name, resolution, total_lenth, lenth_FM)
+    add_camera(camera_name, resolution_high,resolution_low, lenth_u_x,lenth_u_y,FMx,FMy,unity)

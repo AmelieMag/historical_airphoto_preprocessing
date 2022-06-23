@@ -172,7 +172,7 @@ if __name__ == "__main__":
     
     
     # add camera button
-    ttk.Button(root, text="Add camera", style='Accent.TButton', command=add_camera_interface).grid(row=22, column=2)
+    # ttk.Button(root, text="Add camera", style='Accent.TButton', command=add_camera_interface).grid(row=22, column=2)
 
     def resolution_list(camera):
         # this function changes the list of resolution depending on the choosen camera
