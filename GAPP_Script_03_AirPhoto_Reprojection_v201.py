@@ -88,7 +88,7 @@ num_cores =  1 # multiprocessing.cpu_count() - 1
 
 
 
->
+
 def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file, 
                    camera,resolution_file,input_resolution):
 

@@ -142,10 +142,7 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
     print("Script file path is {}, filename is {}".format(path, filename))
     
     # select the resolution file corresponding to the good camera
-    if camera =="Wild RC5a":
-        resolution_file = r"{}/Wild_RC5_Airphoto_Photo_dimensions_vs_dpi.csv".format(path)
-    if camera == "Wild RC10":
-        resolution_file = r"{}/Wild_RC10_Airphoto_Photo_dimensions_vs_dpi.csv".format(path)
+    resolution_file = r"{}/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,camera)
         
     print('01_CanvasSized' in os.listdir(output_folder))
     print(Steps['Script_01'] == 1)
