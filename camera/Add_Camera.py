@@ -125,9 +125,8 @@ def add_camera(camera, resh, resl, Lux,Luy,FMux,FMuy,u):
                          })
 
     # creating csv with ";" as separator
-    # file.to_csv("{}/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,
-                # camera), sep=';', index=False)
-    print(file)
+    file.to_csv("{}/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,
+                camera), sep=';', index=False)
 
 
 if __name__ == "__main__":

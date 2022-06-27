@@ -49,6 +49,7 @@ dataset = 'WRC10'  # image dataset name (e.g., 'Virunga_1958')
 
 
 def fiducialTemplateCreator(image4template_path,output_template_folder, fiducialCenters, halfwidth=120, dataset='WRC10'):
+    print(fiducialCenters)
 
     img4template = cv2.imread(image4template_path, cv2.IMREAD_UNCHANGED)
     corner_list = ['top_left', 'top_right', 'bot_right', 'bot_left']
@@ -84,13 +85,15 @@ def fiducialTemplateCreator(image4template_path,output_template_folder, fiducial
 
     # save templates as images
     i = 1
+    
+    if not os.path.exists(output_template_folder):
+        os.makedirs(output_template_folder)
+    
     for corner_image in corner_list:
-        template_name = 'Template_' + dataset + \
-            "_" + corner_image + '_' + str(i) + '.tif'
+        template_name = 'Template_' + dataset + "_" + corner_image + '_' + str(i) + '.tif'
         while os.path.exists(output_template_folder + "/" + template_name):
             i = i+1
-            template_name = 'Template_' + dataset + \
-                "_" + corner_image + '_' + str(i) + '.tif'
+            template_name = 'Template_' + dataset + "_" + corner_image + '_' + str(i) + '.tif'
 
         corner_image_name = output_template_folder + "/" + template_name
         cv2.imwrite(corner_image_name, fiducialCenters_images[corner_image])
@@ -100,8 +103,7 @@ def fiducialTemplateCreator(image4template_path,output_template_folder, fiducial
              "Center_Fiduciales.txt", "a", newline='')
     w = csv.writer(f, delimiter=" ")
     for corner_image in corner_list:
-        template_name = 'Template_' + dataset + "_" + \
-            corner_image + '_' + str(i)  # + '.tif'
+        template_name = 'Template_' + dataset + "_" + corner_image + '_' + str(i)  # + '.tif'
         line = [[template_name, str(halfwidth), str(halfwidth)]]
         w.writerows(line)
     f.close()
