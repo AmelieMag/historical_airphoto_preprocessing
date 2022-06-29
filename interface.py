@@ -88,32 +88,20 @@ def main():
     root.option_add('*Font', 'TkMenuFont')  # define font
     
     # Menu    
-    
-    # def test():
-    #     camera_file = open(r"{}/camera/camera.txt".format(filepath), "r")
-    #     camera_value_list = camera_file.readlines()[0].split(";")
-    #     camera_file.close()
-    #     print("coucou {}".format(camera_value_list))
-        
-    
     menubar = tk.Menu(root)
-    # partial(interface_fiducial_template)
     menubar.add_command(label = "Create fiducial template",command = lambda:[interface_fiducial_template()])
     menubar.add_command(label = "Add camera system",command = lambda:[add_camera_interface(),refresh()])
     menubar.add_command(label = "Quit",command = root.destroy)
     
     # add epmty label for better spacing
-    # emptylabel = tk.Label(root, text="  ").grid(row=0, column=0, sticky="nsew")
     tk.Label(root, text="  ").grid(row=12, column=0, columnspan=9, sticky="nsew")
-    # emptylabel = tk.Label(root, text="       ").grid(row=0, column=1, sticky="nsew")
-    tk.Label(root, text="       ").grid( row=3, column=7, sticky="nsew")
-    tk.Label(root, text="       ").grid( row=6, column=7, sticky="nsew")
-    tk.Label(root, text="       ").grid(row=11, column=1, sticky="nsew")
+    tk.Label(root, text="  ").grid( row=3, column=7, sticky="nsew")
     tk.Label(root, text="  ").grid(row=24, column=0, sticky="nsew")
+    tk.Label(root, text="  ").grid(row=24, column=10, sticky="nsew")
     tk.Label(root, text="              ").grid(row=25, column=1, columnspan=9, sticky="nsew")
-    tk.Label(root, text="       ").grid( row=20, column=1, columnspan=4, sticky="nsew")
-    tk.Label(root, text="       ").grid(row=29, column=1, columnspan=4, sticky="nsew")
-    tk.Label(root, text="       ").grid(row=33, column=1, columnspan=4, sticky="nsew")
+    tk.Label(root, text="  ").grid( row=20, column=1, columnspan=4, sticky="nsew")
+    
+    tk.Label(root, text=" ").grid( row=35, column=0)
 
     label1 = tk.Label(root, text="\n   Folders", font=('calibre', 11, 'bold'))
     label_input_folder = tk.Label(root, text='   Aerial images folder:')
@@ -289,9 +277,9 @@ def main():
     ttk.Checkbutton(root, text="Script_03: Reproject",variable=check_03).grid(row=32, column=1, sticky="w")
     ttk.Checkbutton(root, text="Script_04: Downsampling",variable=check_04).grid(row=32, column=2, sticky="w")
 
-    tk.Button(root, text="Select folder", command=lambda: find_input_folder(entry_input_images, "Select aerial image folder")).grid(row=3, column=9, sticky="w")
-    tk.Button(root, text="Select folder", command=lambda: find_output_folder(entry_output_images, "Select output directory")).grid(row=6, column=9, sticky="w")
-    tk.Button(root, text="Select folder", command=lambda: find_template_folder(entry_fidu, "Select template directory")).grid(row=10, column=9, sticky="w")
+    tk.Button(root, text="Select folder", command=lambda: find_input_folder(entry_input_images, "Select aerial image folder")).grid(row=3, column=8, sticky="w")
+    tk.Button(root, text="Select folder", command=lambda: find_output_folder(entry_output_images, "Select output directory")).grid(row=6, column=8, sticky="w")
+    tk.Button(root, text="Select folder", command=lambda: find_template_folder(entry_fidu, "Select template directory")).grid(row=10, column=8, sticky="w")
 
     chosen_p = chosen_p.get()
     chosen_SharpIntensity = chosen_SharpIntensity.get()
@@ -302,16 +290,14 @@ def main():
                           chosen_output_res, chosen_HistoCal, chosen_SharpIntensity,
                           check_01, check_02, check_03, check_04)
 
-    ttk.Button(root, text="Run", style='Accent.TButton', command=main_script_launch).grid(row=34, column=7, columnspan=6, sticky="nsew")
+    ttk.Button(root, text="Run", style='Accent.TButton', command=main_script_launch).grid(row=34, column=7, columnspan=3, sticky="nsew")
 
     # buttonUpdate = ttk.Button(root, text=" update ", style='Accent.TButton', command=click_me).grid(row=31,column=3,columnspan = 2, sticky="w")
 
     # b = Button(root, text=" update ", command=click_me).grid(row=31,column=3,columnspan = 2, sticky="w")
 
-    root.rowconfigure(9, {'minsize': 30})
-    root.columnconfigure(9, {'minsize': 30})
     # defined a window size to be sure it doesn't change over time
-    root.geometry(str(700) + "x" + str(800))
+    root.geometry()
     root.resizable(width=tk.TRUE, height=tk.TRUE)
     
     # # Menu
