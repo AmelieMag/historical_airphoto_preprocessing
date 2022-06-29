@@ -517,7 +517,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
     # 1.0. #select the area of the image where the fiducials are located (i.e., the corners)
     # -------------------------------------------------------------------------------------
 
-    image_path = image_folder + '/' + image_name
+    image_path = '{}/{}'.format(image_folder, image_name)
     img = cv2.imread(image_path)
     F = select_fiducial_corners(
         img, S, p, Fidu_type, black_stripe_location)  # cropping image corner
@@ -772,6 +772,7 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     print('=  Version 2.0.1 (December 2021)  |  B. Smets/A. Dille (RMCA/VUB)   =')
     print('=====================================================================')
     print(' ')
+    
 
     if __name__ != "__main__":  # defaulting parameters if running in tkinter
         center_fidu_tempate_CSV, corner_folder, type_fidu, Out_fiducialmarks_CSV, RunParallel, DebugMode, OneTemplateMax, S, \
@@ -788,13 +789,12 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     w = csv.writer(f, delimiter=",")
     w.writerows(lines)
     f.close()
-
+    
     # List image files
     allfiles = os.listdir(image_folder)
-    imlist = [filename for filename in allfiles if filename[-4:]
-              in [".tif", ".TIF", ".jpg", ".JPG"]]
+    imlist = [filename for filename in allfiles if filename[-4:] in [".tif", ".TIF", ".jpg", ".JPG"]]
     imlist = imlist + [filename for filename in allfiles if filename[-5:] in [".tiff", ".TIFF"]]
-
+    
     print('\n-------------------------------'
           '\n-------------------------------\n'
           ' > found {} images to process'

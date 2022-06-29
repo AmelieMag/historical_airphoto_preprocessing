@@ -87,11 +87,6 @@ def main():
     # root.tk.call("set_theme", "light")  # light or dark theme
     root.option_add('*Font', 'TkMenuFont')  # define font
     
-    # Menu    
-    menubar = tk.Menu(root)
-    menubar.add_command(label = "Create fiducial template",command = lambda:[interface_fiducial_template()])
-    menubar.add_command(label = "Add camera system",command = lambda:[add_camera_interface(),refresh()])
-    menubar.add_command(label = "Quit",command = root.destroy)
     
     # add epmty label for better spacing
     tk.Label(root, text="  ").grid(row=12, column=0, columnspan=9, sticky="nsew")
@@ -100,16 +95,24 @@ def main():
     tk.Label(root, text="  ").grid(row=24, column=10, sticky="nsew")
     tk.Label(root, text="              ").grid(row=25, column=1, columnspan=9, sticky="nsew")
     tk.Label(root, text="  ").grid( row=20, column=1, columnspan=4, sticky="nsew")
+    tk.Label(root, text=" ").grid( row=34, column=0)
+    tk.Label(root, text=" ").grid( row=36, column=0)
     
-    tk.Label(root, text=" ").grid( row=35, column=0)
+    
+    # Menu    
+    menubar = tk.Menu(root)
+    menubar.add_command(label = "Create fiducial template",command = lambda:[interface_fiducial_template()])
+    menubar.add_command(label = "Add camera system",command = lambda:[add_camera_interface(),refresh()])
+    
+    root.config(menu=menubar) # adds the menu to root
+    
+    # Labels
 
     label1 = tk.Label(root, text="\n   Folders", font=('calibre', 11, 'bold'))
     label_input_folder = tk.Label(root, text='   Aerial images folder:')
     label_output_folder = tk.Label(root, text='   Output folder:')
     label_template_folder = tk.Label(root, text='   Fiducial template folder:')
-    label_template_folder_info = tk.Label(
-        root, text='   templates images for 4 typical fiducial marks + associated .txt file. See Script_00_Tool_FiducialTemplateCreator', font=('calibre', 7, 'italic'))
-
+    label_template_folder_info = tk.Label(root, text='   templates images for 4 typical fiducial marks + associated .txt file. See Script_00_Tool_FiducialTemplateCreator', font=('calibre', 7, 'italic'))
     label5 = tk.Label(root, text="   Input parameters",font=('calibre', 11, 'bold'))
     label6 = tk.Label(root, text="\n   Steps to launch",font=('calibre', 11, 'bold'))
 
@@ -118,16 +121,14 @@ def main():
     label_output_folder.grid(row=5, columnspan=4, sticky="w")
     label_template_folder.grid(row=8, columnspan=4, sticky="w")
     label_template_folder_info.grid(row=9, columnspan=6, sticky="w")
-
     label5.grid(row=12, columnspan=3, sticky="w")
     label6.grid(row=30, columnspan=3, sticky="w")
 
     global path
     path = "./"
 
-    # size
-    # n = 60
-    # Initialize Entries
+    ######### Initialize Entries #########
+    
     # folders
     entry_input_images = tk.Entry(root, width=80)
     entry_input_images.grid(row=3, column=1, columnspan=4, sticky="nsew")
@@ -184,7 +185,7 @@ def main():
         entry_ouput_res['menu'].delete(0, 'end')
 
         # select file
-        resolution_file = r"{}/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path, camera)
+        resolution_file = r"{}/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(filepath, camera)
         res_file = pd.read_csv(resolution_file, sep=';', header=[0])
 
         res_col = res_file['Resolution']
@@ -202,7 +203,6 @@ def main():
     
     refreshbutton= ttk.Button(root, text="refresh camera list", command=refresh)
     refreshbutton.grid(row=22, column=2, sticky="nsew")
-        
     
     # camera_value_list = ["Wild RC5", "Wild RC10"] # other camera could be added here. Values should then be adapted in Script_03_AirPhoto_Reprojection_v102_GAPP.py
     tk.Label(root, text=" Camera system:").grid(row=21, column=1, sticky="w")
@@ -271,11 +271,13 @@ def main():
     check_02 = tk.IntVar()
     check_03 = tk.IntVar()
     check_04 = tk.IntVar()
+    check_05 = tk.IntVar()
 
     ttk.Checkbutton(root, text="Script_01: Canvas Sizing",variable=check_01).grid(row=31, column=1, sticky="w")
     ttk.Checkbutton(root, text="Script_02: Fiducial Detection",variable=check_02).grid(row=31, column=2, sticky="w")
     ttk.Checkbutton(root, text="Script_03: Reproject",variable=check_03).grid(row=32, column=1, sticky="w")
     ttk.Checkbutton(root, text="Script_04: Downsampling",variable=check_04).grid(row=32, column=2, sticky="w")
+    ttk.Checkbutton(root, text="Script_05: Create Mask",variable=check_05).grid(row=31, column=3, sticky="w")
 
     tk.Button(root, text="Select folder", command=lambda: find_input_folder(entry_input_images, "Select aerial image folder")).grid(row=3, column=8, sticky="w")
     tk.Button(root, text="Select folder", command=lambda: find_output_folder(entry_output_images, "Select output directory")).grid(row=6, column=8, sticky="w")
@@ -288,9 +290,9 @@ def main():
     main_script_launch = partial(main_script, input_folder, output_folder, template_folder,
                           dataset, chosen_p, stripes, chosen_camera, chosen_input_res,
                           chosen_output_res, chosen_HistoCal, chosen_SharpIntensity,
-                          check_01, check_02, check_03, check_04)
+                          check_01, check_02, check_03, check_04, check_05)
 
-    ttk.Button(root, text="Run", style='Accent.TButton', command=main_script_launch).grid(row=34, column=7, columnspan=3, sticky="nsew")
+    ttk.Button(root, text="Run", style='Accent.TButton', command=main_script_launch).grid(row=35, column=1, columnspan=9, sticky="nsew")
 
     # buttonUpdate = ttk.Button(root, text=" update ", style='Accent.TButton', command=click_me).grid(row=31,column=3,columnspan = 2, sticky="w")
 
@@ -300,25 +302,7 @@ def main():
     root.geometry()
     root.resizable(width=tk.TRUE, height=tk.TRUE)
     
-    # # Menu
-    # def test():
-    #     camera_file = open(r"{}/camera/camera.txt".format(filepath), "r")
-    #     camera_value_list = camera_file.readlines()[0].split(";")
-    #     camera_file.close()
-    #     print("coucou {}".format(camera_value_list))
-        
-    # def recharge():
-    #     add_camera_interface()
-    #     test()
-        
-    # re = partial(recharge)
-    # menubar = tk.Menu(root)
-    # filemenu = tk.Menu(menubar,tearoff=0)
-    # filemenu.add_command(label = "Create fiducial template",command = add_camera_interface)
-    # filemenu.add_command(label = "Add camera system",command = re)
     
-    # menubar.add_cascade(label="File", menu=filemenu)
-    # root.config(menu=menubar)
     # End of interface
 
     # Mainloop
