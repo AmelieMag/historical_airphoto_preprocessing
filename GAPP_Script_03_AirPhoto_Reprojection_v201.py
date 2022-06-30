@@ -84,7 +84,7 @@ import shutil
 # (minimum = 1; suggested value = (number of cores) - 1)
 # (if you don't know how many cores you have, write: 'multiprocessing.cpu_count()')
 
-num_cores =  1 # multiprocessing.cpu_count() - 1
+num_cores =   multiprocessing.cpu_count() - 1
 
 
 
