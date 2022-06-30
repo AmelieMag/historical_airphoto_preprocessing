@@ -66,7 +66,7 @@ dataset_name = 'TestSingleMask'
 
 ################################ END OF SETUP ################################
 
-def main_script_05(input_image_folder,output_mask_folder,dataset_name,percent_mask_size_X,percent_mask_size_Y,image_format = '*.tif'):
+def main_script_05(input_image_folder,output_mask_folder,dataset_name,percent_mask_size_X=12,percent_mask_size_Y=12,image_format = '*.tif'):
     print(' ')
     print('=====================================================================')
     print('=            PYTHON SCRIPT TO CREATE A SINGLE IMAGE MASK            =')
@@ -81,7 +81,7 @@ def main_script_05(input_image_folder,output_mask_folder,dataset_name,percent_ma
     
     ### Detect the max width and height in the dataset ###
     Image.MAX_IMAGE_PIXELS = None
-    sizes = [Image.open(f, 'r').size for f in images_list]
+    sizes = [Image.open('{}/{}'.format(input_image_folder,f), 'r').size for f in images_list]
     sizes_array = np.asarray(sizes)
     widths = sizes_array[:, 0]
     heights = sizes_array[:, 1]

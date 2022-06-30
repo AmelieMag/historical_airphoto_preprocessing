@@ -62,7 +62,7 @@ This script provide a graphic interface for controlling and launching all script
 This script aims at creating templates for the four fiducial (corners) of an aerial image for later automatic detection of the fiducials on a large set of aerial images (see SCRIPT 02 - Automatic Fiducials Detection). Simply provide the path of one image of the set with representative fiducial marks. Note that SCRIPT 02 allows to test multiple templates. Good practice to lauch it before GAPP_AirPhotoPreprocessing_main_v101.
 
 **The required Python modules:**  
-*- OpenCV* 
+*- OpenCV*  
 *- Matplotlib*  
 *- Pathlib*  
 

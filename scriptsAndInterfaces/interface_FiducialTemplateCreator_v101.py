@@ -7,11 +7,12 @@ Created on Thu Jun 23 14:06:01 2022
 """
 
 import tkinter as tk
-import sys
+import sys 
 
 from GAPP_Script_00_Tool_FiducialTemplateCreator_v101 import fiducialTemplateCreator
 from tkinter import ttk
 from tkinter import filedialog
+from time import sleep
 
 sys.path.insert(0, '')
 
@@ -116,8 +117,9 @@ def interface_fiducial_template():
         w = halfwidth.get()
         d = dataset.get()
     
-        fiducialTemplateCreator(
-            input_image[0], output_folder[0], fiducialCenters, w, d)
+        fiducialTemplateCreator(input_image[0], output_folder[0], fiducialCenters, w, d)
+        sleep(1)
+        root.destroy()
     
     
     tk.Label(root, text=" ").grid(row=12)
