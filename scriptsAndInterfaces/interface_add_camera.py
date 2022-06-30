@@ -6,19 +6,18 @@ Created on Wed Jun 22 15:32:45 2022
          Ecole nationale des sciences geographiques
 """
 
-from Add_Camera import add_camera
 import tkinter as tk
 from tkinter import ttk
 import sys,os
-from functools import partial
 import time as t
 
-sys.path.insert(0, '')
 
 absFilePath = os.path.abspath(__file__)
 filepath, filename = os.path.split(absFilePath)
 
 sys.path.insert(0, '{}/camera'.format(filepath))
+
+from Add_Camera import add_camera
 
 
 def add_camera_interface():
@@ -46,25 +45,25 @@ def add_camera_interface():
     
     # total lenth in x 
     tk.Label(root, text="    Total lenth X:").grid(row=5, column=0)
-    Lux=tk.DoubleVar(root,value=18)
+    Lux=tk.DoubleVar(root)
     resolution = tk.Entry(root, textvariable=Lux)
     resolution.grid(row=5,column=1)
     
     # total lenth in y 
     tk.Label(root, text="    Total lenth Y:").grid(row=6, column=0)
-    Luy = tk.DoubleVar(root,value=18)
+    Luy = tk.DoubleVar(root)
     resolution = tk.Entry(root, textvariable=Luy)
     resolution.grid(row=6,column=1)
     
     #  beetween fiducial marks in x 
-    tk.Label(root, text="    Beetween fiducial marks X:").grid(row=8, column=0)
-    FMux = tk.DoubleVar(root,value=16.5)
+    tk.Label(root, text="    Lenth beetween fiducial marks X:").grid(row=7, column=0)
+    FMux = tk.DoubleVar(root)
     resolution = tk.Entry(root, textvariable=FMux)
     resolution.grid(row=7,column=1)
     
     # lenth beetween fiducial marksin y 
-    tk.Label(root, text="    Beetween fiducial marks Y:").grid(row=8, column=0)
-    FMuy = tk.DoubleVar(root,value=16.5)
+    tk.Label(root, text="    lenth beetween fiducial marks Y:").grid(row=8, column=0)
+    FMuy = tk.DoubleVar(root)
     resolution = tk.Entry(root, textvariable=FMuy)
     resolution.grid(row=8,column=1)
     
@@ -92,7 +91,7 @@ def add_camera_interface():
     root.mainloop()
     
     
-    camera_file = open(r"{}/camera.txt".format(filepath), "r")
+    camera_file = open(r"{}/camera/camera.txt".format(filepath), "r")
     update_list = camera_file.readlines()[0].split(";")
     camera_file.close()
     

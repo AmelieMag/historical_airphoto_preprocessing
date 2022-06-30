@@ -45,30 +45,28 @@ from tkinter import ttk
 from tkinter import filedialog
 from functools import partial
 import tkinter as tk
-import sys
-import os
+import sys, os
 import pandas as pd
 
-sys.path.insert(0, '')  # Local imports
-
-from GAPP_AirPhotoPreprocessing_main_v101 import main_script
-from interface_FiducialTemplateCreator_v101 import interface_fiducial_template
 
 absFilePath = os.path.abspath(__file__)
 filepath, filename = os.path.split(absFilePath)
 
-sys.path.insert(0, '{}/camera'.format(filepath))
+sys.path.insert(0, '{}/scriptsAndInterfaces'.format(filepath))  # Local imports
+
+from GAPP_AirPhotoPreprocessing_main_v101 import main_script
+from interface_FiducialTemplateCreator_v101 import interface_fiducial_template
+
+sys.path.insert(0, '{}/scriptsAndInterfaces/camera'.format(filepath))
 
 from interface_add_camera import add_camera_interface
-
-
 
 
 def main():
     """
     print(' ')
     print('=====================================================================')
-    print('=               GeoRiskA Aerial Photos Preprocessing Chain           =')
+    print('=              GeoRiskA Aerial Photos Preprocessing Chain           =')
     print('=         Version 1.0.1 (December 2021) |  Antoine Dille (RMCA)     =')
     print('=====================================================================')
     print(' ')
@@ -168,7 +166,7 @@ def main():
         # this function recovers the camera chose button with a new button
 
         # select file
-        camera_file = open(r"{}/camera/camera.txt".format(filepath), "r")
+        camera_file = open(r"{}/scriptsAndInterfaces/camera/camera.txt".format(filepath), "r")
         camera_value_list = camera_file.readlines()[0].split(";")
         camera_file.close()
         chosen_camera.set("Choose a camera")
@@ -185,7 +183,7 @@ def main():
         entry_ouput_res['menu'].delete(0, 'end')
 
         # select file
-        resolution_file = r"{}/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(filepath, camera)
+        resolution_file = r"{}/scriptsAndInterfaces/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(filepath, camera)
         res_file = pd.read_csv(resolution_file, sep=';', header=[0])
 
         res_col = res_file['Resolution']
@@ -197,7 +195,7 @@ def main():
             entry_ouput_res['menu'].add_command(label=choice, command=tk._setit(chosen_output_res, choice))
 
         
-    camera_file = open(r"{}/camera/camera.txt".format(filepath), "r")
+    camera_file = open(r"{}/scriptsAndInterfaces/camera/camera.txt".format(filepath), "r")
     camera_value_list = camera_file.readlines()[0].split(";")
     camera_file.close()
     

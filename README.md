@@ -162,8 +162,7 @@ This script is only useful for photogrammetric software that allows you to apply
 
 This script aims to create a mask with the same dimensions of the preprocessed photos (i.e., photos sized, reprojected and downsampled). The mask consists of rectangles hiding the image corners, where the fiducial marks are ususally still visible on the final photos. In a future version of the script, an option will be added to hide fiducial marks that are at mid-distance between the corners of the image.
 
-**The required Python modules to add (in addition to the Anaconda Distribution):**  
-*- Glob*   
+**The required Python modules to add (in addition to the Anaconda Distribution):**    
 *- Numpy*  
 *- Pillow*  
 
