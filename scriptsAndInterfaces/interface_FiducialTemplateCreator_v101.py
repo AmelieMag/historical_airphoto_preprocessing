@@ -19,11 +19,14 @@ sys.path.insert(0, '')
 def interface_fiducial_template():
     root = tk.Tk()
     root.title("Fiducial Template creator")
-    print("bouh")
     tk.Label(root, text=" ").grid(rowspan=15, column=0)
+    tk.Label(root, text=" ").grid(rowspan=15, column=5)
+    tk.Label(root, text=" ").grid(rowspan=15, column=7)
     
     # hight left corner
-    tk.Label(root, text="Hight left corner coordinates").grid(row=1, column=1)
+    tk.Label(root, text="Hight left corner coordinates").grid(row=1, column=0,columnspan=2)
+    tk.Label(root, text="X =").grid(row=2, column=0)
+    tk.Label(root, text="Y =").grid(row=3, column=0)
     X1 = tk.IntVar(root)
     Y1 = tk.IntVar(root)
     HLx = tk.Entry(root, textvariable=X1)
@@ -32,25 +35,31 @@ def interface_fiducial_template():
     HLy.grid(row=3, column=1)
     
     # hight right corner
-    tk.Label(root, text="Hight right corner coordinates").grid(row=1, column=3)
+    tk.Label(root, text="Hight right corner coordinates").grid(row=1, column=3,columnspan=2)
+    tk.Label(root, text="X =").grid(row=2, column=3)
+    tk.Label(root, text="Y =").grid(row=3, column=3)
     X2 = tk.IntVar(root)
     Y2 = tk.IntVar(root)
     HRx = tk.Entry(root, textvariable=X2)
     HRy = tk.Entry(root, textvariable=Y2)
-    HRx.grid(row=2, column=3)
-    HRy.grid(row=3, column=3)
+    HRx.grid(row=2, column=4)
+    HRy.grid(row=3, column=4)
     
     # low right corner
-    tk.Label(root, text="Low right corner coordinates").grid(row=9, column=3)
+    tk.Label(root, text="Low right corner coordinates").grid(row=9, column=3,columnspan=2)
+    tk.Label(root, text="X =").grid(row=10, column=3)
+    tk.Label(root, text="Y =").grid(row=11, column=3)
     X3 = tk.IntVar(root)
     Y3 = tk.IntVar(root)
     LRx = tk.Entry(root, textvariable=X3)
     LRy = tk.Entry(root, textvariable=Y3)
-    LRx.grid(row=10, column=3)
-    LRy.grid(row=11, column=3)
+    LRx.grid(row=10, column=4)
+    LRy.grid(row=11, column=4)
     
     # low left corner
-    tk.Label(root, text="Low left corner coordinates").grid(row=9, column=1)
+    tk.Label(root, text="Low left corner coordinates").grid(row=9, column=0,columnspan=2)
+    tk.Label(root, text="X =").grid(row=10, column=0)
+    tk.Label(root, text="Y =").grid(row=11, column=0)
     X4 = tk.IntVar(root)
     Y4 = tk.IntVar(root)
     LLx = tk.Entry(root, textvariable=X4)
@@ -69,20 +78,20 @@ def interface_fiducial_template():
     tk.Entry(root, textvariable=dataset).grid(row=7, column=2)
     
     # image
-    tk.Label(root, text="input image folder").grid(row=13, column=0)
+    tk.Label(root, text="  Input image folder").grid(row=13, column=0)
     entry_input_images = tk.Entry(root, width=80)
     entry_input_images.grid(row=13, column=1, columnspan=4)
     
     tk.Button(root, text="Select folder", command=lambda: find_input_image(
-        entry_input_images, "Select image ")).grid(row=13, column=5)
+        entry_input_images, "Select image ")).grid(row=13, column=6)
     
     # folders
-    tk.Label(root, text="output data folder").grid(row=14, column=0)
+    tk.Label(root, text="  Output data folder").grid(row=14, column=0)
     entry_output_folder = tk.Entry(root, width=80)
     entry_output_folder.grid(row=14, column=1, columnspan=4)
     
     tk.Button(root, text="Select folder", command=lambda: find_output_folder(
-        entry_output_folder, "Select output directory")).grid(row=14, column=5)
+        entry_output_folder, "Select output directory")).grid(row=14, column=6)
     
     global path
     path = "./"
@@ -110,8 +119,8 @@ def interface_fiducial_template():
     
     def main():
         fiducialCenters = {'top_left': [X1.get(), Y1.get()],
-                           'top_right': [X2.get(), Y2.get()],
-                           'bot_right': [X3.get(), Y3.get()],
+                           'top_right': [X2.get(),Y2.get()],
+                           'bot_right': [X3.get(),Y3.get()],
                            'bot_left': [X4.get(), Y4.get()]}
         print("interface fidcenter: {}".format(X1.get()))
         w = halfwidth.get()
