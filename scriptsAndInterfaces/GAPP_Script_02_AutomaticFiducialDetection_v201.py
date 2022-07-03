@@ -79,13 +79,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib
-from math import atan, pi, sin, cos
 from time import sleep
 import multiprocessing
 from joblib import Parallel, delayed
 import cv2
-from PIL import Image
-import json
 # so that no figures are showing up (note that it may pose problems when using Spyder (?))
 matplotlib.use('Agg')
 

@@ -9,6 +9,8 @@ PYTHON INTERFACE FOR THE STANDARDIZING OF AERIAL PHOTO ARCHIVE
 Version: 1.0.1
 Author: Antoine Dille
         (Royal Museum for Central Africa  )
+        Amelie Maginot
+        (Ecole Nationale des Sciences Geographiques)
 
 Citation:
     Smets, B., 2021
@@ -51,7 +53,6 @@ import os
 import sys
 import shutil
 
-
 sys.path.insert(0, '')  # Local imports
 
 
@@ -59,8 +60,6 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
                 stripes, chosen_camera, chosen_input_res, chosen_output_res,
                 chosen_HistoCal, chosen_SharpIntensity, S1=0, S2=0, S3=0, S4=0,S5=0, Steps=''):
     """
-    
-
     Parameters
     ----------
     input_folder : TYPE
@@ -138,17 +137,13 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
     fiducialmarks_file = '{}/_fiducial_marks_coordinates_{}.csv'.format(output_canvas_sized,dataset_0)
        
     
-    
     # Get the path of the file where the script is located
     absFilePath = os.path.abspath(__file__)
     path, filename = os.path.split(absFilePath)
-    print("Script file path is {}, filename is {}".format(path, filename))
     
     # select the resolution file corresponding to the good camera
     resolution_file = r"{}/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,camera)
         
-    print('01_CanvasSized' in os.listdir(output_folder))
-    print(Steps['Script_01'] == 1)
     if '01_CanvasSized' in os.listdir(output_folder) and Steps['Script_01'] == 1:
         shutil.rmtree('{}/01_CanvasSized'.format(output_folder))
         print('01_CanvasSized cleared')
@@ -175,12 +170,10 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
         main_script_02(output_canvas_sized, template_0,dataset_0, chosen_p_0, stripes_0)
     # 03_Reprojection
     if Steps['Script_03'] == 1:
-        main_script_03(output_canvas_sized, output_reprojected,
-                       fiducialmarks_file, camera, resolution_file, chosen_input_res)
+        main_script_03(output_canvas_sized, output_reprojected, fiducialmarks_file, camera, resolution_file, chosen_input_res)
     # 04_Resize
     if Steps['Script_04'] == 1:
-        main_script_04(output_reprojected, output_resized, scale_percent_0,
-                       chosen_HistoCal_0, chosen_SharpIntensity_0, resolution_file, chosen_output_res)
+        main_script_04(output_reprojected, output_resized, scale_percent_0, chosen_HistoCal_0, chosen_SharpIntensity_0, resolution_file, chosen_output_res)
     # 05_Mask
     if Steps['Script_05'] == 1:
         main_script_05(output_resized, output_mask,dataset_0)
@@ -240,22 +233,11 @@ if __name__ == '__main__':
     Steps = {'Script_01': 0,  # GAPP_Script_01_AirPhoto_CanvasSizing_v201
              'Script_02': 0,  # GAPP_Script_02_AutomaticFiducialDetection_v201
              'Script_03': 0,  # GAPP_Script_03_AirPhoto_Reprojection_v201
-             'Script_04': 1}  # GAPP_Script_04_AirPhotos_Resize_v201
+             'Script_04': 1,  # GAPP_Script_04_AirPhotos_Resize_v201
+             'Script_05': 0}  # GAPP_Script_05_AirPhoto_CreateSingleMask_v101
 
     ###############################################################################
 
-    # cleaning the folder / be carefull if you want to use the script several times
-
-    if '01_CanvasSized' in os.listdir(output_folder) and Steps['Script_01'] == 1:
-        shutil.rmtree(output_folder + '/01_CanvasSized')
-        print('01_CanvasSized cleared')
-    if '02_Reprojected' in os.listdir(output_folder) and Steps['Script_03'] == 1:
-        shutil.rmtree(output_folder + '/02_Reprojected')
-        print('clear 02_Reprojected')
-    if '03_Resized' in os.listdir(output_folder)  and Steps['Script_04']==1:
-        shutil.rmtree(output_folder + '/03_Resized')
-        print('clear 03_Resized')
-    print(' ')
 
     # Runing main application
 
