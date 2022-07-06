@@ -22,7 +22,7 @@ To install Glob you can use:
 
 ## 2. Launch GAPP
 
-in a terminal, run:
+In a terminal, run:
 >``spyder``
 
 in spyder open GAPP.py and run it with F5 keybord command or with the gree arrow.
@@ -80,7 +80,7 @@ This new window will be open:
 You must find the coordinates of every fiducial marks of a least one air photo of the dataset, you may use Photoshop or Krita (Krita is a free drawing softwer), give the half width of the image you want and the data set name. You must be able of see the entire mark on the picture. You can check it in the output folder that you gave.
 Once you have filed the input image and the output folder, please clic on "Create fiducial template". The script will create four folder and close the fiducial template creator window.
 
-### What if you d'ont find the right camera ?
+### What if you don't find the right camera ?
 clic on "Add camera system" in menu bar
 ![](images\capturedecranGAPP3.png)
 The following window will be open:
@@ -93,4 +93,4 @@ You must fill every space:
 - all lenth must be given in centimeters or inches
 - choose unity
 
-Run the script with "Add camera" button, the window will be close. On the main window clic "Refresh camera list" button to get the new camera in the list
+Run the script with "Add camera" button, the window will be close. On the main window clic "Refresh camera list" button to get the new camera in the list.
