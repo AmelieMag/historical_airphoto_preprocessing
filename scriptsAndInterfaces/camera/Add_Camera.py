@@ -71,6 +71,8 @@ def add_camera(camera, resh, resl, Lux,Luy,FMux,FMuy,u):
     FMpx = []
     FMpy = []
     
+    # choose unity
+    
     if u == "inche":
         for i in range( len(res)):
             lpx.append(round(Lux*res[i]))

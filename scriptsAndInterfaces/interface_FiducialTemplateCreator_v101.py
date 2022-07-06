@@ -78,11 +78,11 @@ def interface_fiducial_template():
     tk.Entry(root, textvariable=dataset).grid(row=7, column=2)
     
     # image
-    tk.Label(root, text="  Input image folder").grid(row=13, column=0)
+    tk.Label(root, text="  Input image").grid(row=13, column=0)
     entry_input_images = tk.Entry(root, width=80)
     entry_input_images.grid(row=13, column=1, columnspan=4)
     
-    tk.Button(root, text="Select folder", command=lambda: find_input_image(
+    tk.Button(root, text="Select image", command=lambda: find_input_image(
         entry_input_images, "Select image ")).grid(row=13, column=6)
     
     # folders
@@ -135,7 +135,7 @@ def interface_fiducial_template():
     tk.Label(root, text=" ").grid(row=15)
     tk.Label(root, text=" ").grid(row=17)
     
-    ttk.Button(root, text="create fiducial template",
+    ttk.Button(root, text="Create fiducial template",
                command=main).grid(row=16, column=2)
     
     root.mainloop()
