@@ -105,11 +105,19 @@ def main():
     root.config(menu=menubar) # adds the menu to root
     
     # Labels
-
+    labeltext_input_folder = tk.StringVar()
+    labeltext_input_folder.set('   Aerial images folder:')
+    
+    labeltext_output_folder = tk.StringVar()
+    labeltext_output_folder.set('   Output folder:')
+    
+    labeltext_template_folder = tk.StringVar()
+    labeltext_template_folder.set('   Fiducial template folder:')
+    
     label1 = tk.Label(root, text="\n   Folders", font=('calibre', 11, 'bold'))
-    label_input_folder = tk.Label(root, text='   Aerial images folder:')
-    label_output_folder = tk.Label(root, text='   Output folder:')
-    label_template_folder = tk.Label(root, text='   Fiducial template folder:')
+    label_input_folder = tk.Label(root, textvariable=labeltext_input_folder)
+    label_output_folder = tk.Label(root, textvariable=labeltext_output_folder)
+    label_template_folder = tk.Label(root, textvariable=labeltext_template_folder)
     label_template_folder_info = tk.Label(root, text='   templates images for 4 typical fiducial marks + associated .txt file. See Script_00_Tool_FiducialTemplateCreator', font=('calibre', 7, 'italic'))
     label5 = tk.Label(root, text="   Input parameters",font=('calibre', 11, 'bold'))
     label6 = tk.Label(root, text="\n   Steps to launch",font=('calibre', 11, 'bold'))
@@ -127,6 +135,17 @@ def main():
 
     ######### Initialize Entries #########
     
+    
+    def check_dataset(dataset,fiducial_template_folder):
+        FM = pd.read_csv('{}/{}'.format(fiducial_template_folder,'Center_Fiduciales.txt'), sep=' ',header=None) 
+        fid = [n for n in FM[:][0] if n[:len('Template_%s_top' % (dataset))] in 'Template_%s_top' % (dataset) or  n[:len('Template_%s_bot' % (dataset))] in 'Template_%s_bot' % (dataset)]
+        if len(fid )==0:
+            labeltext_dataset.set("  there is not coresponding datase name in fiducial template")
+            return False
+        else:
+            labeltext_dataset.set("   Dataset name:")
+            return True
+
     # folders
     entry_input_images = tk.Entry(root, width=80)
     entry_input_images.grid(row=3, column=1, columnspan=4, sticky="nsew")
@@ -138,10 +157,15 @@ def main():
     entry_fidu.grid(row=10, column=1, columnspan=4, sticky="nsew")
 
     # Dataset
-    tk.Label(root, text="   Dataset name:").grid(row=13, columnspan=2, sticky="w")
-    dataset = tk.StringVar(root, value='WRC10')
+    
+    labeltext_dataset = tk.StringVar()
+    labeltext_dataset.set("   Dataset name:")
+    label_dataset = tk.Label(root, textvariable=labeltext_dataset).grid(row=13, columnspan=2, sticky="w")
+    dataset = tk.StringVar(root)
     entry_dataset = tk.Entry(root, textvariable=dataset)
     entry_dataset.grid(row=14, column=1, columnspan=2, sticky="nsew")
+    tk.Button(root, text="check dataset", command=lambda: check_dataset(dataset.get(),template_folder[0])).grid(row=13, column=4, sticky="w")
+
 
     # P value
     p_value_list = [0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.15, 0.20]
@@ -285,11 +309,32 @@ def main():
     chosen_SharpIntensity = chosen_SharpIntensity.get()
 
     # Partial library is used to preset partial functions with the chosen parameters before run it
-    main_script_launch = partial(main_script, input_folder, output_folder, template_folder,
-                          dataset, chosen_p, stripes, chosen_camera, chosen_input_res,
-                          chosen_output_res, chosen_HistoCal, chosen_SharpIntensity,
-                          check_01, check_02, check_03, check_04, check_05)
-
+    
+    # main_script_launch = partial(main_script, input_folder, output_folder, template_folder,
+    #                       dataset, chosen_p, stripes, chosen_camera, chosen_input_res,
+    #                       chosen_output_res, chosen_HistoCal, chosen_SharpIntensity,
+    #                       check_01, check_02, check_03, check_04, check_05)
+    
+    def main_script_launch():
+        if len(input_folder)==0:
+            labeltext_input_folder.set('   Aerial images folder: please select folder')
+            label_input_folder.config(fg='red')
+        elif len(output_folder)==0:
+            label_input_folder.config(fg='black')
+            labeltext_output_folder.set('   Output folder: please select folder')
+            label_output_folder.config(fg='red')
+        elif len(template_folder)==0:
+            labeltext_template_folder.set('   Fiducial template folder: please select folder')
+            label_template_folder.config(fg='red')
+        elif len(dataset)==0:
+            labeltext_dataset.set("Please choose a dataset")
+            label_dataset.config(fg='red')
+        else : 
+            main_script(input_folder, output_folder, template_folder,
+                        dataset, chosen_p, stripes, chosen_camera, chosen_input_res,
+                        chosen_output_res, chosen_HistoCal, chosen_SharpIntensity,
+                        check_01, check_02, check_03, check_04, check_05)
+    
     ttk.Button(root, text="Run", style='Accent.TButton', command=main_script_launch).grid(row=35, column=1, columnspan=9, sticky="nsew")
 
     # buttonUpdate = ttk.Button(root, text=" update ", style='Accent.TButton', command=click_me).grid(row=31,column=3,columnspan = 2, sticky="w")
@@ -305,6 +350,7 @@ def main():
 
     # Mainloop
     root.mainloop()
+    
 
 
 if __name__ == "__main__":
