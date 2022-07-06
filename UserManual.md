@@ -1,96 +1,94 @@
-# GAPP User manual
-## 1. Environment
-To use GAPP application you need sevral librairies install in your environament:
-- Glob
-- Joblib
-- Matplotlib  
-- Numpy
-- OpenCv
-- Pandas
-- Pathlib
-- Pillow
-- Spyder
-- Tkinter (Tk)
+# GAPP User manual 
+## 1. Environment 
 
-It is recommanded to use anaconda or miniconda enviromment.
+To use GAPP application you need serval libraries install in your environment: 
+- Glob 
+- Joblib 
+- Matplotlib   
+- Numpy 
+- OpenCv 
+- Pandas 
+- Pathlib 
+- Pillow 
+- Spyder 
+- Tkinter (Tk) 
 
-To install librairies you can use this line:
->``conda install librairy``
+It is recommended to use anaconda or miniconda environment. 
 
-To install Glob you can use:
->``conda install -c conda-forge glob2``
+To install libraries, you can use this line: 
+>``conda install librairy`` 
 
-## 2. Launch GAPP
+To install Glob you can use: 
+>``conda install -c conda-forge glob2`` 
 
-In a terminal, run:
->``spyder``
+## 2. Launch GAPP 
 
-in spyder open GAPP.py and run it with F5 keybord command or with the gree arrow.
+In a terminal, run: 
+>``spyder`` 
 
-![Spyder](images\capturedecranspyder.png)
+in spyder open GAPP.py and run it with F5 keyboard command or with the green arrow. 
 
-## 3. Application
+![Spyder](images\capturedecranspyder.png) 
 
-The following window will be open:
-![Main window](images\capturedecranGAPP.png)
+## 3. Application 
 
-**Every space must be filled**
+The following window will be open: 
+![Main window](images\capturedecranGAPP.png) 
 
-### Folder
+**Every space must be filled** 
 
-In Folder part you have fill
-- The folder where the photos to scan locate,
-- The folder where you want to every steps of the programm will be save,
-- The folder of the Fiducial template.
-Your back to the main window. Ypu now have to fill
-- The dataset name (you can check il it corresponds to the fiducial template you gave with the "Check dataset" button)
-- The p-value
-- Don't change the stripes location it wouldn't work
-- The camera used to takes the airphotos
-- The input resolution (scanning resolution) 
-- The output resolution
-- The CLAHE Historical calibration
-- The Sharpening intensity 
-- Ckeck all the steps you want to launch (it is recommanded to check all the steps)
+### Folder 
 
-Run the program with the "Run" button.
+In Folder part you have fill 
+- The folder where the photos to scan locate, 
+- The folder where you want to every step of the program will be save, 
+- The folder of the Fiducial template. 
+Your back to the main window. Ypu now have to fill 
+- The dataset name (you can check il it corresponds to the fiducial template you gave with the "Check dataset" button) 
+- The p-value 
+- Don't change the stripes location it wouldn't work 
+- The camera used to take the air photos 
+- The input resolution (scanning resolution)  
+- The output resolution 
+- The CLAHE Historical calibration 
+- The Sharpening intensity  
+- Check all the steps you want to launch (it is recommended to check all the steps) 
 
+Run the program with the "Run" button. 
+### What is the fiducial template? 
+![Fiducial template example](images\capturedecranfiducialtemplate.png) 
 
-### What is the fiducial template?
+"bande10" is the dataset name, followed by the corner and the half width and half-length of each image. 
 
-![Fiducial template exemple](images\capturedecranfiducialtemplate.png)
+For each line of the fiducial template a picture like this is in the same folder and is name after the first column. 
 
-"bande10" is the dataset name, followed by the corner and the half width and half lenth of each images.
+For instance, this following image is the top right fiducial mark of the first image of the air photo folder 
 
-For each line of the fiducial template a picture like this is in the same folder and is name after the first column.
+![Fiducial mark example](images\capturedecranfiducialMark.png) 
 
-For instance this folling image is the top right fiducial mark of the first image of the airphoto folder
+### How to create fiducial template 
 
-![Fiducial mark exemple](images\capturedecranfiducialMark.png)
+Click on "Createfiducial template", 
+![](images\capturedecranGAPP2.png) 
 
-### How to create fiducuial template
+This new window will be open: 
+![](images\capturedecranfiducialtemplatecreator.PNG) 
 
-Clic on "Createfiducial template",
+You must find the coordinates of every fiducial mark of a least one air photo of the dataset, you may use Photoshop or Krita (Krita is a free drawing software), give the half width of the image you want and the data set name. You must be able of see the entire mark on the picture. You can check it in the output folder that you gave. 
 
-![](images\capturedecranGAPP2.png)
+Once you have filed the input image and the output folder, please click on "Create fiducial template". The script will create four folder and close the fiducial template creator window. 
 
-This new window will be open:
-![](images\capturedecranfiducialtemplatecreator.PNG)
+### What if you don't find the right camera? 
+Click on "Add camera system" in menu bar 
+![](images\capturedecranGAPP3.png) 
+The following window will be open: 
 
-You must find the coordinates of every fiducial marks of a least one air photo of the dataset, you may use Photoshop or Krita (Krita is a free drawing softwer), give the half width of the image you want and the data set name. You must be able of see the entire mark on the picture. You can check it in the output folder that you gave.
-Once you have filed the input image and the output folder, please clic on "Create fiducial template". The script will create four folder and close the fiducial template creator window.
+![](images\capturedecranAddCamera.png) 
 
-### What if you don't find the right camera ?
-clic on "Add camera system" in menu bar
-![](images\capturedecranGAPP3.png)
-The following window will be open:
+You must fill every space: 
+- camera name without spaces, 
+- hight and low resolution have recommended default value but it can be change 
+- all length must be given in centimetres or inches 
+- choose unity 
 
-![](images\capturedecranAddCamera.png)
-
-You must fill every space:
-- camera name without spaces,
-- hight and low resoluion have recommanded default value but it can be change
-- all lenth must be given in centimeters or inches
-- choose unity
-
-Run the script with "Add camera" button, the window will be close. On the main window clic "Refresh camera list" button to get the new camera in the list.
+Run the script with "Add camera" button, the window will be close. On the main window click "Refresh camera list" button to get the new camera in the list. 
