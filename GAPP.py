@@ -326,7 +326,7 @@ def main():
         elif len(template_folder)==0:
             labeltext_template_folder.set('   Fiducial template folder: please select folder')
             label_template_folder.config(fg='red')
-        elif len(dataset)==0:
+        elif len(dataset.get())==0:
             labeltext_dataset.set("Please choose a dataset")
             label_dataset.config(fg='red')
         else : 

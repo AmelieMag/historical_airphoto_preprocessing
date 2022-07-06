@@ -13,7 +13,7 @@ To use GAPP application you need serval libraries install in your environment:
 - Spyder 
 - Tkinter (Tk) 
 
-It is recommended to use anaconda or miniconda environment. 
+It is recommended to use an anaconda or miniconda environment. 
 
 To install libraries, you can use this line: 
 >``conda install librairy`` 
@@ -26,7 +26,7 @@ To install Glob you can use:
 In a terminal, run: 
 >``spyder`` 
 
-in spyder open GAPP.py and run it with F5 keyboard command or with the green arrow. 
+In spyder open GAPP.py and run it with F5 keyboard command or with the green arrow. 
 
 ![Spyder](images\capturedecranspyder.png) 
 
@@ -86,9 +86,9 @@ The following window will be open:
 ![](images\capturedecranAddCamera.png) 
 
 You must fill every space: 
-- camera name without spaces, 
-- hight and low resolution have recommended default value but it can be change 
-- all length must be given in centimetres or inches 
-- choose unity 
+- Camera name without spaces, 
+- Hight and low resolution have recommended default value but it can be change 
+- All length must be given in centimetres or inches 
+- Choose unity 
 
 Run the script with "Add camera" button, the window will be close. On the main window click "Refresh camera list" button to get the new camera in the list. 
