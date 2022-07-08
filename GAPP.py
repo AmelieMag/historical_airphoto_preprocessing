@@ -161,7 +161,7 @@ def main():
     labeltext_dataset = tk.StringVar()
     labeltext_dataset.set("   Dataset name:")
     label_dataset = tk.Label(root, textvariable=labeltext_dataset).grid(row=13, columnspan=2, sticky="w")
-    dataset = tk.StringVar(root)
+    dataset = tk.StringVar(root, value="Virunga_1958")
     entry_dataset = tk.Entry(root, textvariable=dataset)
     entry_dataset.grid(row=14, column=1, columnspan=2, sticky="nsew")
     tk.Button(root, text="check dataset", command=lambda: check_dataset(dataset.get(),template_folder[0])).grid(row=13, column=4, sticky="w")
@@ -228,7 +228,7 @@ def main():
     
     # camera_value_list = ["Wild RC5", "Wild RC10"] # other camera could be added here. Values should then be adapted in Script_03_AirPhoto_Reprojection_v102_GAPP.py
     tk.Label(root, text=" Camera system:").grid(row=21, column=1, sticky="w")
-    chosen_camera = tk.StringVar(root)
+    chosen_camera = tk.StringVar(root, value= "Wild RC5")
     chosen_camera.set("Choose a camera")  # by default
     resol_list = partial(resolution_list)
     entry_camera = tk.OptionMenu(root, chosen_camera, *camera_value_list, command=resol_list)
