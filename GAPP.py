@@ -334,6 +334,8 @@ def main():
                         dataset, chosen_p, stripes, chosen_camera, chosen_input_res,
                         chosen_output_res, chosen_HistoCal, chosen_SharpIntensity,
                         check_01, check_02, check_03, check_04, check_05)
+            
+            root.destroy()
     
     ttk.Button(root, text="Run", style='Accent.TButton', command=main_script_launch).grid(row=35, column=1, columnspan=9, sticky="nsew")
 

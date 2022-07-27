@@ -17,12 +17,17 @@ place d'un traitement manuel long et fastidieu
 print('\n')
 ## import files 
 
+maison = "J"
+musee = "F"
+
+# lieu = maison
+lieu = musee
 
 dataset = 'Burundi_1981-82'
 # dataset = 'Usumbura1955'
 
-# file = r'J:\2_SfM_READY_photo_collection\Usumbura_1955' #.format(dataset)
-file = r'J:\2_SfM_READY_photo_collection\{}'.format(dataset)
+# file = r'{}:\2_SfM_READY_photo_collection\Usumbura_1955' #.format(lieu,dataset)
+file = r'{}:\2_SfM_READY_photo_collection\{}'.format(lieu,dataset)
 
 # refFile = r'{}/{}_FidMarks_CSV.csv'.format(file,dataset)
 refFile =  r'{}/GAPP/Burundi_1981-82_FidMarks_Excel2_complete.csv'.format(file)
@@ -65,7 +70,6 @@ def distance(A,B):
 a = 0
 listdist = []
 count = {}
-countToCheck = {}
 listcoin = [] 
 
 
@@ -86,17 +90,18 @@ for i in range(len(ref.index)):
     bot_right_test = [test.loc[i]['X3'],test.loc[i]['Y3']] 
     bot_left_test = [test.loc[i]['X4'],test.loc[i]['Y4']] 
     
-    top_left_dist = distance(top_left_ref,top_left_test)
-    top_right_dist = distance(top_right_ref, top_right_test)
-    bot_right_dist = distance(bot_right_ref, bot_right_test)
-    bot_left_dist = distance(bot_left_ref, bot_left_test)
+    top_left_dist = distance(top_left_ref,top_left_test),'top_left'
+    top_right_dist = distance(top_right_ref, top_right_test),'top_right'
+    bot_right_dist = distance(bot_right_ref, bot_right_test),'bot_right'
+    bot_left_dist = distance(bot_left_ref, bot_left_test),'bot_left'
     
-    corners_dist = [top_left_dist,top_right_dist,bot_right_dist,bot_left_dist]
+    corners_dist = [list(top_left_dist),list(top_right_dist),list(bot_right_dist),list(bot_left_dist)]
+    # corners = ['top_left','top_right','bot_right','bot_left']
     
         
     
     for c in corners_dist:
-        listcoin.append ([ref.loc[i]['PHOTO_ID'],c])
+        listcoin.append ([ref.loc[i]['PHOTO_ID']]+c)
         a+=1
         
     listdist += corners_dist
@@ -104,7 +109,7 @@ for i in range(len(ref.index)):
 # on cherche les coins tres problematique
 cointresproblematique = []
 for i in range(len(listcoin)):
-    # print(listcoin[i])
+    # print(listcoin[i][1])
     if listcoin[i][1]>=200:
         cointresproblematique.append(listcoin[i])
 
@@ -120,8 +125,11 @@ for i in cointresproblematique:
 
 listdist = sorted(listdist)
 c = 0
+m=[]
 for d in listdist:
-    if d < 10000:
+    d= d[0]
+    m.append(d)
+    if d < 200:
         if d in count:
             count[d]=count[d]+1    
         else:
@@ -132,13 +140,20 @@ for d in listdist:
 print("c =",c)   # nbr de coin dont la distance a la ref est superieure a 200
 print("a =",a)   #  nbr de coin dont la distance a la ref est superieur a 10
 # print(list(count.keys()),list(count.values()))
-
-print("sum = ", sum(list(count.values())),"moy =", np.mean(listdist))
+# print(l)
+print("sum = ", sum(list(count.values())),"moy =", np.mean(m))
 print(len(listdist)/4)
-print('tocheckdictionnary = ', countToCheck)
 
 
 plt.scatter(list(count.keys()),list(count.values()))
     
 
-print("ecarttype = ",np.std(listdist))
+print("ecarttype = ",np.std(m))
+n=0
+for coin in listcoin:
+    
+    d=coin[1]
+    if d>30 and d<50:
+        n+=1
+        print(coin)
+print(n)
