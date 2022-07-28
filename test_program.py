@@ -20,6 +20,8 @@ print('\n')
 maison = "J"
 musee = "F"
 
+serie = 4
+
 # lieu = maison
 lieu = musee
 
@@ -31,14 +33,21 @@ file = r'{}:\2_SfM_READY_photo_collection\{}'.format(lieu,dataset)
 
 # refFile = r'{}/{}_FidMarks_CSV.csv'.format(file,dataset)
 refFile =  r'{}/GAPP/Burundi_1981-82_FidMarks_Excel2_complete.csv'.format(file)
-testFile =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
-tobeCheck =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
+
+if serie == 3:
+    testFile =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
+    tobeCheck =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
+
+if serie == 4:
+    testFile =  r'{}/GAPP\test4\01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
+    tobeCheck =  r'{}/GAPP\test4\01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
+
 
 
 
 print('refFile = ',refFile)
 print('testFile = ', testFile)
-print('tobeCheck = ', tobeCheck)
+print('tobeCheck = ', tobeCheck,"\n")
 
 # print('\n',os.listdir(file+'/GAPP/01_CanvasSized/_fiducial_marks_coordinates_Burundi_1981-82.csv'))
 
@@ -67,7 +76,7 @@ def distance(A,B):
     return round( np.sqrt(x+y))
 
 # test
-a = 0
+
 listdist = []
 count = {}
 listcoin = [] 
@@ -102,58 +111,80 @@ for i in range(len(ref.index)):
     
     for c in corners_dist:
         listcoin.append ([ref.loc[i]['PHOTO_ID']]+c)
-        a+=1
         
     listdist += corners_dist
  
 # on cherche les coins tres problematique
+n=0
+l1=200
 cointresproblematique = []
 for i in range(len(listcoin)):
     # print(listcoin[i][1])
-    if listcoin[i][1]>=200:
+    if listcoin[i][1]>=l1:
+        n+=1
         cointresproblematique.append(listcoin[i])
+        
+print("nbr de coins dont la distance est superieur à ",l1 ," : ",n)
 
-#on verifi si les coins problematiques sont dans la liste des coins a verifier
+# On verifi si les coins problematiques sont dans la liste des coins a verifier
 # print('len problem = ',len(cointresproblematique))
-# print(toCheck)
+print("\ncoins tres problematiqus")
 for i in cointresproblematique:
     b = False
     for j in range(len(toCheck)):
         if i[0] in toCheck.loc[j]['image']:
             b = True
-    print(i,b)
+    # print(i,b)
+    
 
 listdist = sorted(listdist)
 c = 0
 m=[]
+lgraphmax=1000
+lgraphmin=0
 for d in listdist:
     d= d[0]
-    m.append(d)
-    if d < 200:
+    
+    if d < lgraphmax and lgraphmin<d:
+        m.append(d)
         if d in count:
             count[d]=count[d]+1    
         else:
             count[d]=1
     else:
         c+=1
-        
-print("c =",c)   # nbr de coin dont la distance a la ref est superieure a 200
-print("a =",a)   #  nbr de coin dont la distance a la ref est superieur a 10
-# print(list(count.keys()),list(count.values()))
-# print(l)
-print("sum = ", sum(list(count.values())),"moy =", np.mean(m))
-print(len(listdist)/4)
 
-
-plt.scatter(list(count.keys()),list(count.values()))
-    
-
+print("nbr de coin compte : ",len(listdist)-c, 'soit ',(len(listdist)-c)*100/len(listdist),'%' )
+print('   ',c," coin non compte ", ' sur ',len(listdist) ,'soit',round( c*100/len(listdist),1),'%\n')   # nbr de coin non compte
+print("sum = ", sum(list(count.values())))
+print("moy =", np.mean(m))
 print("ecarttype = ",np.std(m))
+print('nbr image = ',int(len(listdist)/4))
+
+plt.title('nbr de coin par distance {}<d<{}'.format(lgraphmin,lgraphmax))
+plt.scatter(list(count.keys()),list(count.values()))
+plt.show()
+
 n=0
+l2=30
+listCoin=[]
 for coin in listcoin:
-    
+    b=False
     d=coin[1]
-    if d>30 and d<50:
+    if d>l2 :#and d<50:
         n+=1
-        print(coin)
-print(n)
+        listCoin.append(coin)
+print('il y a __',n,'__ coins dont la distance est superieur à ',l2 )
+
+
+inToCheck=0
+for coin in listCoin:
+    b=False
+    for j in range(len(toCheck)):
+        if coin[0] in toCheck.loc[j]['image'] and coin[2] in toCheck.loc[j]['corner']:
+            inToCheck+=1
+            b = True
+    print(coin, b)
+
+print("nbr de coin dans toCheck",inToCheck,"sur",len(listCoin),"coins\n")
+# print(toCheck)

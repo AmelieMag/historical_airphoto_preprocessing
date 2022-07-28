@@ -63,8 +63,8 @@ from pathlib import Path
 ################################    SETUP     ################################
 
 ##### DIRECTORY PATHS #####
-input_image_folder = r"E:\Adille-Data\RESIST\GIS\Optical_Imagery\Aerial_Photographs_Bukavu_1958-59\Aerial_Pictures\Bukavu_1959_CC"
-output_image_folder = r"E:\Adille-Data\RESIST\GIS\Optical_Imagery\Aerial_Photographs_Bukavu_1958-59\Aerial_Pictures\Bukavu_1959_CC\CanvasSized_02"
+input_image_folder = r"D:\ENSG_internship_2022\0_Original"
+output_image_folder = r"D:\ENSG_internship_2022\script1"
 
 #### PARALLEL PROCESSING #####
 # (Choose the number of CPU cores you want to use)
@@ -122,11 +122,12 @@ def main_script_01(input_image_folder, output_image_folder):
     print(' ')
 
     ### Standardize the the canvas size of each image ###
-    def standardize_canvas(image_path):
+    def standardize_canvas(image_path,n):
         # Read the images, keep the original pixel depth (-1) and read its dimensions
         # file = os.path.join(input_image_folder, os.path.splitext(os.path.basename(image))[0] + '.tif')
         img = cv2.imread(image_path, -1)
-        rows, cols = img.shape
+        print(n,img.shape[:2],image_path,len(img.shape))
+        rows, cols = img.shape[:2]
         # Add columns and rows to change the canvas size to maximum width and height
         rows_added = height_max - rows
         cols_added = width_max - cols
@@ -139,7 +140,11 @@ def main_script_01(input_image_folder, output_image_folder):
         cv2.imwrite(os.path.join(output_image_folder, img_name + '_CanvasSized.tif'), imready)
 
     # Use parallel processing
-    Parallel(n_jobs=num_cores, verbose=30)(delayed(standardize_canvas)(image_path) for image_path in images_list_path)
+    # Parallel(n_jobs=num_cores, verbose=30)(delayed(standardize_canvas)(image_path) for image_path in images_list_path)
+    n=1
+    for image_path in images_list_path:
+        standardize_canvas(image_path,n)
+        n+=1
 
     sleep(3)
 
