@@ -20,7 +20,7 @@ print('\n')
 maison = "J"
 musee = "F"
 
-serie = 4
+serie = 3
 
 # lieu = maison
 lieu = musee
