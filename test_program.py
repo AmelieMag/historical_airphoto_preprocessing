@@ -20,20 +20,30 @@ print('\n')
 maison = "J"
 musee = "F"
 
-serie = 3
+serie = 2
 
 # lieu = maison
 lieu = musee
 
-dataset = 'Burundi_1981-82'
+# dataset = 'Burundi_1981-82'
 # dataset = 'Usumbura1955'
+dataset = 'Usumbura_1957-58-59'
 
 # file = r'{}:\2_SfM_READY_photo_collection\Usumbura_1955' #.format(lieu,dataset)
-file = r'{}:\2_SfM_READY_photo_collection\{}'.format(lieu,dataset)
+file = r'{}:\2_SfM_READY_photo_collection\{}/GAPP'.format(lieu,dataset)
 
-# refFile = r'{}/{}_FidMarks_CSV.csv'.format(file,dataset)
-refFile =  r'{}/GAPP/Burundi_1981-82_FidMarks_Excel2_complete.csv'.format(file)
+refFile = r'{}/{}_FidMarks_CSV.csv'.format(file,dataset)
+# refFile =  r'{}/GAPP/Burundi_1981-82_FidMarks_Excel2_complete.csv'.format(file)
 
+
+testFile =  r'{}/test{}/01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.format(file,serie,dataset)
+tobeCheck =  r'{}/test{}/01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,serie,dataset)
+
+
+if serie == 1:
+    testFile =  r'{}/GAPP/test1/01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
+    tobeCheck =  r'{}/GAPP/test1/01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
+    
 if serie == 3:
     testFile =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
     tobeCheck =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
@@ -105,13 +115,8 @@ for i in range(len(ref.index)):
     bot_left_dist = distance(bot_left_ref, bot_left_test),'bot_left'
     
     corners_dist = [list(top_left_dist),list(top_right_dist),list(bot_right_dist),list(bot_left_dist)]
-    # corners = ['top_left','top_right','bot_right','bot_left']
-    
-        
-    
     for c in corners_dist:
         listcoin.append ([ref.loc[i]['PHOTO_ID']]+c)
-        
     listdist += corners_dist
  
 # on cherche les coins tres problematique
@@ -140,7 +145,7 @@ for i in cointresproblematique:
 listdist = sorted(listdist)
 c = 0
 m=[]
-lgraphmax=1000
+lgraphmax=100
 lgraphmin=0
 for d in listdist:
     d= d[0]
@@ -156,12 +161,15 @@ for d in listdist:
 
 print("nbr de coin compte : ",len(listdist)-c, 'soit ',(len(listdist)-c)*100/len(listdist),'%' )
 print('   ',c," coin non compte ", ' sur ',len(listdist) ,'soit',round( c*100/len(listdist),1),'%\n')   # nbr de coin non compte
+
+print ("Sur la selection :")
 print("sum = ", sum(list(count.values())))
 print("moy =", np.mean(m))
 print("ecarttype = ",np.std(m))
 print('nbr image = ',int(len(listdist)/4))
+print('\n')
 
-plt.title('nbr de coin par distance {}<d<{}'.format(lgraphmin,lgraphmax))
+plt.title('nbr de coin par distance {}<d<{} \necart type: {}'.format(lgraphmin,lgraphmax,np.std(m)))
 plt.scatter(list(count.keys()),list(count.values()))
 plt.show()
 
@@ -184,7 +192,8 @@ for coin in listCoin:
         if coin[0] in toCheck.loc[j]['image'] and coin[2] in toCheck.loc[j]['corner']:
             inToCheck+=1
             b = True
-    print(coin, b)
+    if not b:
+        print(coin, b)
 
 print("nbr de coin dans toCheck",inToCheck,"sur",len(listCoin),"coins\n")
 # print(toCheck)
