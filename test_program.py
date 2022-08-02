@@ -20,14 +20,14 @@ print('\n')
 maison = "J"
 musee = "F"
 
-serie = 2
+serie = 4
 
 # lieu = maison
 lieu = musee
 
-# dataset = 'Burundi_1981-82'
+dataset = 'Burundi_1981-82'
 # dataset = 'Usumbura1955'
-dataset = 'Usumbura_1957-58-59'
+# dataset = 'Usumbura_1957-58-59'
 
 # file = r'{}:\2_SfM_READY_photo_collection\Usumbura_1955' #.format(lieu,dataset)
 file = r'{}:\2_SfM_READY_photo_collection\{}/GAPP'.format(lieu,dataset)
@@ -40,17 +40,17 @@ testFile =  r'{}/test{}/01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.forma
 tobeCheck =  r'{}/test{}/01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,serie,dataset)
 
 
-if serie == 1:
-    testFile =  r'{}/GAPP/test1/01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
-    tobeCheck =  r'{}/GAPP/test1/01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
+# if serie == 1:
+#     testFile =  r'{}/GAPP/test1/01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
+#     tobeCheck =  r'{}/GAPP/test1/01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
     
-if serie == 3:
-    testFile =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
-    tobeCheck =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
+# if serie == 3:
+#     testFile =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
+#     tobeCheck =  r'{}/GAPP/test3/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
 
-if serie == 4:
-    testFile =  r'{}/GAPP\test4\01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
-    tobeCheck =  r'{}/GAPP\test4\01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
+# if serie == 4:
+#     testFile =  r'{}/GAPP\test4\01_CanvasSized/_fiducial_marks_coordinates_{}.csv'.format(file,dataset)
+#     tobeCheck =  r'{}/GAPP\test4\01_CanvasSized/_fiducial_marks_coordinates_{}_ToBeChecked.csv'.format(file,dataset)
 
 
 
@@ -75,6 +75,11 @@ with open(tobeCheck) as f:
 # print(ref)
 # print(test)
 # print(toCheck)
+
+## parametre graph
+
+lgraphmax=100000
+lgraphmin=0
 
 
 ## functions
@@ -139,18 +144,16 @@ for i in cointresproblematique:
     for j in range(len(toCheck)):
         if i[0] in toCheck.loc[j]['image']:
             b = True
-    # print(i,b)
+    print(i)
     
 
 listdist = sorted(listdist)
 c = 0
 m=[]
-lgraphmax=100
-lgraphmin=0
 for d in listdist:
     d= d[0]
     
-    if d < lgraphmax and lgraphmin<d:
+    if d < lgraphmax and lgraphmin<=d:
         m.append(d)
         if d in count:
             count[d]=count[d]+1    
@@ -170,11 +173,12 @@ print('nbr image = ',int(len(listdist)/4))
 print('\n')
 
 plt.title('nbr de coin par distance {}<d<{} \necart type: {}'.format(lgraphmin,lgraphmax,np.std(m)))
-plt.scatter(list(count.keys()),list(count.values()))
+plt.stem(list(count.keys()),list(count.values()),markerfmt=' ',basefmt=' ')
 plt.show()
 
 n=0
-l2=30
+l2=10
+
 listCoin=[]
 for coin in listcoin:
     b=False
@@ -182,7 +186,7 @@ for coin in listcoin:
     if d>l2 :#and d<50:
         n+=1
         listCoin.append(coin)
-print('il y a __',n,'__ coins dont la distance est superieur à ',l2 )
+print('  ',n,' coins sur ',len(listdist),'ont une distance est superieur à ',l2 )
 
 
 inToCheck=0
@@ -193,7 +197,10 @@ for coin in listCoin:
             inToCheck+=1
             b = True
     if not b:
-        print(coin, b)
+        if coin[2]=='bot_right':
+            print(coin,b,"*")
+        else:
+            print(coin, b)
 
 print("nbr de coin dans toCheck",inToCheck,"sur",len(listCoin),"coins\n")
 # print(toCheck)

@@ -13,7 +13,7 @@ To use GAPP application you need serval libraries install in your environment:
 - Spyder 
 - Tkinter (Tk) 
 
-It is recommended to use an anaconda or miniconda environment. 
+I used an anaconda environment. 
 
 To install libraries, you can use this line: 
 >``conda install librairy`` 
@@ -23,7 +23,7 @@ To install Glob you can use:
 
 ## 2. Launch GAPP 
 
-In a terminal, run: 
+In a anaconda or miniconda terminal, run: 
 >``spyder`` 
 
 In spyder open GAPP.py and run it with F5 keyboard command or with the green arrow. 
@@ -45,8 +45,8 @@ In Folder part you have fill
 - The folder of the Fiducial template. 
 Your back to the main window. Ypu now have to fill 
 - The dataset name (you can check il it corresponds to the fiducial template you gave with the "Check dataset" button) 
-- The p-value 
-- Don't change the stripes location it wouldn't work 
+- The p-value (% of image width that is a black/white strip)
+- The strip location must be: left, top, right, bottom. You can put sevral location.
 - The camera used to take the air photos 
 - The input resolution (scanning resolution)  
 - The output resolution 
@@ -55,6 +55,7 @@ Your back to the main window. Ypu now have to fill
 - Check all the steps you want to launch (it is recommended to check all the steps) 
 
 Run the program with the "Run" button. 
+
 ### What is the fiducial template? 
 ![Fiducial template example](images\capturedecranfiducialtemplate.png) 
 
@@ -72,15 +73,26 @@ Click on "Createfiducial template",
 ![](images\capturedecranGAPP2.png) 
 
 This new window will be open: 
+
 ![](images\capturedecranfiducialtemplatecreator.PNG) 
 
-You must find the coordinates of every fiducial mark of a least one air photo of the dataset, you may use Photoshop or Krita (Krita is a free drawing software), give the half width of the image you want and the data set name. You must be able of see the entire mark on the picture. You can check it in the output folder that you gave. 
+You must find the coordinates of every fiducial mark of a least one air photo of the dataset. Choose a photo where the fiducial marks are the most visible as possible.
+You may use Photoshop or GIMP to find the coordinates in pixels of the fiducial marks centers.
+fill the following spaces :
+- the fiducial centers of each corner
+- the half width of the image
+- the data set name.
 
-Once you have filed the input image and the output folder, please click on "Create fiducial template". The script will create four folder and close the fiducial template creator window. 
+Once you have filed the input image and the output folder, please click on "Create fiducial template". The script will create four image files, a txt file and close the fiducial template creator window. 
+
+Check the fiducial template. You must be able of see the entire mark on the picture and it must be centered. You can check it in the output folder that you gave before. 
+
 
 ### What if you don't find the right camera? 
 Click on "Add camera system" in menu bar 
+
 ![](images\capturedecranGAPP3.png) 
+
 The following window will be open: 
 
 ![](images\capturedecranAddCamera.png) 
