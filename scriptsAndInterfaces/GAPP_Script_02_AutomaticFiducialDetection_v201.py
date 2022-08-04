@@ -534,6 +534,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
     Coord = {}
     ToBeChecked = pd.DataFrame(columns=['image', 'corner', 'x', 'y', 'maxVal'])
     fidu_coordinates = pd.DataFrame(columns=['image', 'corner', 'template', 'xc', 'yc', 'u1', 'v1', 'maxVal'])
+    toCheck=False
     
     for corner in F_area:
         # -------------------------------------------------------------------------------------
@@ -658,6 +659,17 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                         ignore_index=True)
 
                                 else:
+                                    
+                                    
+                                    cornerPath = '{}/cornerToCheck'.format(image_folder)
+                                    Path(cornerPath).mkdir(parents=True, exist_ok=True)
+                                    
+                                    cornerName = '{}_{}.tiff'.format(image_name,corner)
+                                    path = os.path.join(image_folder,cornerName)
+                                    # print(F[corner][0])
+                                    cv2.imwrite(path,F[corner][0])
+                                    
+                                    
                                     ToBeChecked = ToBeChecked.append(
                                         {'image': image_name, 
                                          'corner': corner, 
@@ -749,7 +761,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
             else:
                 print(
                     "! Could not find center coordinates for template | << check 'Center_Fiducial.csv' file >>")
-                print('Template_%s_%s_%s' %(Fidu_type, dataset, temp) + " != " + line[0])
+                print('Template_%s_%s' %(Fidu_type, dataset) + " != " + line[0])
 
                 ToBeChecked = ToBeChecked.append(
                     {'image': image_name, 

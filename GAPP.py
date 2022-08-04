@@ -161,7 +161,7 @@ def main():
     labeltext_dataset = tk.StringVar()
     labeltext_dataset.set("   Dataset name:")
     label_dataset = tk.Label(root, textvariable=labeltext_dataset).grid(row=13, columnspan=2, sticky="w")
-    dataset = tk.StringVar(root, value="Virunga_1958")
+    dataset = tk.StringVar(root, value="Burundi_1981-82")
     entry_dataset = tk.Entry(root, textvariable=dataset)
     entry_dataset.grid(row=14, column=1, columnspan=2, sticky="nsew")
     tk.Button(root, text="check dataset", command=lambda: check_dataset(dataset.get(),template_folder[0])).grid(row=13, column=4, sticky="w")
@@ -208,7 +208,8 @@ def main():
 
         # select file
         resolution_file = r"{}/scriptsAndInterfaces/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(filepath, camera)
-        res_file = pd.read_csv(resolution_file, sep=';', header=[0])
+        
+        res_file = pd.read_csv(resolution_file, sep=',', header=[0])
 
         res_col = res_file['Resolution']
         res_list = res_col.tolist()
