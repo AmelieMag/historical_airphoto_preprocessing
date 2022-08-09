@@ -659,14 +659,11 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                         ignore_index=True)
 
                                 else:
-                                    
-                                    
+                                    # saving corner
                                     cornerPath = '{}/cornerToCheck'.format(image_folder)
                                     Path(cornerPath).mkdir(parents=True, exist_ok=True)
-                                    
-                                    cornerName = '{}_{}.tiff'.format(image_name,corner)
-                                    path = os.path.join(image_folder,cornerName)
-                                    # print(F[corner][0])
+                                    cornerName = '{}_{}.tif'.format(image_name,corner)
+                                    path = os.path.join(cornerPath,cornerName)
                                     cv2.imwrite(path,F[corner][0])
                                     
                                     
@@ -804,7 +801,7 @@ def parameters_02(input_image_folder, fiducial_template_folder, dataset):
     Out_fiducialmarks_CSV = '{}/_fiducial_marks_coordinates_{}.csv'.format(input_image_folder,dataset)
 
     # to run using parallel processing (otherwise will process one image after the other
-    RunParallel = False
+    RunParallel = True
     DebugMode = False  # will provide more info about subprocess to the console for checking
     
     # if True it will only use the first matching template. If False it will take more time...

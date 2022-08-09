@@ -163,7 +163,7 @@ def unsharp_mask_OpenCV(image, kernel_size=(3, 3), sigma=1.0):
 
 # functions
 def get_resizing_settings(resolution_file,output_res):
-    res_file = pd.read_csv(resolution_file, sep=';', header=[0])
+    res_file = pd.read_csv(resolution_file, sep=',', header=[0])
     res_col = res_file['Resolution']
     i = res_file.loc[res_col==output_res].index[0]
     settings = (res_file['X ximension (pixel)'][i],res_file['Y dimension (pixel)'][i])

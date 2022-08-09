@@ -32,7 +32,7 @@ class AutoScrollbar(ttk.Scrollbar):
 
 class Zoom_Advanced(ttk.Frame):
     ''' Advanced zoom of the image '''
-    def __init__(self, mainframe, path):
+    def __init__(self, mainframe, path,fidpath):
         ''' Initialize the main Frame '''
         ttk.Frame.__init__(self, master=mainframe)        
         self.master.title('Zoom with mouse wheel')
@@ -42,7 +42,6 @@ class Zoom_Advanced(ttk.Frame):
         hbar = AutoScrollbar(self.master, orient='horizontal')
         vbar.grid(row=0, column=1, sticky='ns')
         hbar.grid(row=1, column=0, sticky='we')
-        
         
         # Create canvas and put image on it
         self.canvas = tk.Canvas(self.master, highlightthickness=0,
@@ -70,12 +69,16 @@ class Zoom_Advanced(ttk.Frame):
         self.canvas.bind('<Button-4>',   self.wheel)  # only with Linux, wheel scroll up
         self.canvas.bind('<Double-Button-1>', self.clic_pixel)
         self.image = Image.open(path)  # open image
+        print(self.image)
+        self.fid = Image.open(path)  # open image
+        print(self.fid)
         self.width, self.height = self.image.size
         self.imscale = 1.0  # scale for the canvaas image
         self.delta = 1.3  # zoom magnitude
         
         # Put image into container rectangle and use it to set proper coordinates to the image
         self.container = self.canvas.create_rectangle(0, 0, self.width, self.height, width=0)
+        
         
         # Plot some optional random rectangles for the test purposes
         # minsize, maxsize, number = 5, 20, 10
@@ -86,29 +89,38 @@ class Zoom_Advanced(ttk.Frame):
         #     y1 = y0 + random.randint(minsize, maxsize)
         #     color = ('red', 'orange', 'yellow', 'green', 'blue')[random.randint(0, 4)]
         #     self.canvas.create_rectangle(x0, y0, x1, y1, fill=color, activefill='black')
-        self.show_image()
-        self.draw_cross()
         
-        # create frame
+        # create right frame
         self.frame = tk.Frame(self.master)
         self.frame.grid(row=0, column=2)
         
         self.button = ttk.Button(self.frame, text="ok",command=self.master.destroy)
-        self.button.grid()
+        self.button.grid(row=0)
+        
+        # Create cross frame
+        
+                
+        # display transparent fid mark
+        # tkfid=ImageTk.PhotoImage(self.fid)
+        # tk.Label(self.frame, image=tkfid).grid()
+        
+        
+        self.show_image()
+        # self.draw_cross()
+        
+        
 
     def scroll_y(self, *args, **kwargs):
         ''' Scroll canvas vertically and redraw the image '''
         self.canvas.yview(*args, **kwargs)  # scroll vertically
         self.show_image()  # redraw the image
         
-        self.draw_cross()
 
     def scroll_x(self, *args, **kwargs):
         ''' Scroll canvas horizontally and redraw the image '''
         self.canvas.xview(*args, **kwargs)  # scroll horizontally
         self.show_image()  # redraw the image
         
-        self.draw_cross()
 
     def move_from(self, event):
         ''' Remember previous coordinates for scrolling with the mouse '''
@@ -120,7 +132,6 @@ class Zoom_Advanced(ttk.Frame):
         self.canvas.scan_dragto(event.x, event.y, gain=1)
         self.show_image()  # redraw the image
         
-        self.draw_cross()
 
     def wheel(self, event):
         ''' Zoom with mouse wheel '''
@@ -146,7 +157,6 @@ class Zoom_Advanced(ttk.Frame):
         
         self.show_image()
         
-        self.draw_cross()
 
     def show_image(self, event=None):
         ''' Show image on the Canvas '''
@@ -184,7 +194,7 @@ class Zoom_Advanced(ttk.Frame):
                                                max(bbox2[1], bbox1[1]),
                                                anchor='nw', image=imagetk)
             self.canvas.lower(imageid)  # set image into background
-            self.canvas.imagetk = imagetk  # keep an extra reference to prevent garbage-collectionµ
+            self.canvas.imagetk = imagetk  # keep an extra reference to prevent garbage-collection
             print(self.canvas.bbox(image))
             
             # self.canvas.create_rectangle(x1,y1,x,y,fill='orange')
@@ -255,61 +265,34 @@ class Zoom_Advanced(ttk.Frame):
         #     print("poin coord 2= ", x+event.x,y+event.y)
             
             
-        
-        b =self.canvas.i
-        # print(b)
-        
-        
-        
-        
-        
-        
-        
-        
+        #TODO
+        a=1
+    
+    # def draw_cross(self,event=None):
+    #     w=self.canvas.winfo_width()
+    #     h=self.canvas.winfo_height()
+    #     self.cross = [self.canvas.create_oval(0, 0, w,h,outline='red'),
+    #                   self.canvas.create_line(0, 0, w,h, fill='red'),
+    #                   self.canvas.create_line(0, w,h,0, fill='red')]
         
         
+        def display_fid(self,event=None):
+            imagetk = ImageTk.PhotoImage(self.fid.resize((int(x2 - x1), int(y2 - y1))))
+            imageid = self.canvas.create_image(anchor='nw', image=imagetk)
+            
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    def draw_cross(self,event=None):
-        x, y = 0,0
-        circle = self.canvas.create_oval(x, y, self.CS, self.CS, offset='n',outline='red')
-        line1=self.canvas.create_line(x, y, self.CS, self.CS, offset='n',fill='red')
-        line2=self.canvas.create_line(x, self.CS, self.CS, y, offset='n',fill='red')
-        
-        
-        
-        
-        
-        
-        
-
 if __name__ == '__main__':
-    Path = r'F:\2_SfM_READY_photo_collection\Burundi_1981-82\GAPP\test6\01_CanvasSized\cornerToCheck'
+    # OOOOOOOOOOOSSSSSSSSSSSKKKOOOOOOOUUUUUUUR https://www.tcl.tk/
+    Path = r'D:\ENSG_internship_2022\Burundi_1981-82\test7\01_CanvasSized\cornerToCheck'
     img = os.listdir(Path)[0]
+    PathFid = r'D:\ENSG_internship_2022\Burundi_1981-82\Fid_mark_template'
+    fid=os.listdir(PathFid)[1]
+  
     
     path = r'{}\{}'.format(Path,img) # place path to your image here
-    root = tk.Tk()
-    app = Zoom_Advanced(root, path=path)
+    fidpath=r'{}\{}'.format(PathFid,fid) # place path to your fiducial mark here
+    
+    root=tk.Tk()
+    app = Zoom_Advanced(root, path=path,fidpath=fidpath)
     root.mainloop()
