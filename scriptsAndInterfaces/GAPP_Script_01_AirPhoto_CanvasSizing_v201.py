@@ -89,6 +89,7 @@ def main_script_01(input_image_folder, output_image_folder):
     # also look into sub directory
     allfiles=[]
     allfiles_path=[]
+    images_list=[]
     for root, dirs, files in os.walk(input_image_folder):
         for file in files:
             allfiles.append(file)

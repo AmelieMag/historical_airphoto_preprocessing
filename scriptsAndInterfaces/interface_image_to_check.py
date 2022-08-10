@@ -98,12 +98,10 @@ def interface_image_to_check(image):
     #initialazing the windows
     root = tk.Tk()
     root.title("Image to check")
-    root.geometry("1000x450")
+    # root.geometry("1000x450")
     
-    tk.Label(root,text =' ').grid(row=0)
-    tk.Label(root,text =' ').grid(row=2)
     
-    frameImage=tk.Frame(root, width= root.winfo_width()/2, height=root.winfo_height()/2)
+    frameImage=tk.Frame(root, width=1000, height=1000)
     frameText=tk.Frame(root)
     frameFid=tk.Frame(root)
     
@@ -122,42 +120,14 @@ def interface_image_to_check(image):
         
     # airPhoto = tk.PhotoImage('{}/01_CanvasSized/{}'.format(input_folder))
     
-    frameText.grid (row=1,column=1)
-    frameImage.grid(row=1,column=2)
-    frameFid.grid(row=1,column=3)
+    frameText.pack()
+    frameImage.pack()
+    frameFid.pack()
+    
     
     # frameImage.loop()
     
     
-    
-    # Choose Template
-    labeltext_template_folder = tk.StringVar()
-    labeltext_template_folder.set('   Fiducial template folder:')
-    
-    label_template_folder = tk.Label(root, textvariable=labeltext_template_folder)
-    label_template_folder.grid(column=0, row=0)
-    
-    template_folder = []
-    def find_template_folder(e, text):
-        global path
-        root.filename = filedialog.askdirectory(initialdir=path, title=text)
-        path = root.filename
-        e.insert(0, root.filename)
-        template_folder.append(path)
-        print(template_folder)
-        
-        l=tk.Label(frameFid,text= ' Here are the fiducial marks you chose :')
-        l.pack()
-        
-    
-    fidButton = tk.Button(root, text="Select folder", command=lambda: find_template_folder(entry_fidu, "Select template directory"))
-    fidButton.grid(row=0, column=8, sticky="w")
-    
-    
-    
-    # fiducial template folder
-    entry_fidu = tk.Entry(root, width=80)
-    entry_fidu.grid(row=0, column=1, columnspan=4, sticky="nsew")
     
     # Close Button
     ttk.Button(frameText, text = 'Ok',command=root.destroy).grid(column=0)
@@ -173,7 +143,7 @@ if __name__=='__main__':
     # data = ''
     # interface_image_to_check(outFold,data)
     
-    Path = r'F:\2_SfM_READY_photo_collection\Burundi_1981-82\GAPP\test4\01_CanvasSized\_To_Be_Checked'
+    Path = r'F:\2_SfM_READY_photo_collection\Burundi_1981-82\GAPP\test6\01_CanvasSized\cornerToCheck'
     img = os.listdir(Path)[0]
     
     imgPath = r'{}\{}'.format(Path,img) # place path to your image here
