@@ -659,14 +659,6 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                         ignore_index=True)
 
                                 else:
-                                    # saving corner
-                                    cornerPath = '{}/cornerToCheck'.format(image_folder)
-                                    Path(cornerPath).mkdir(parents=True, exist_ok=True)
-                                    cornerName = '{}_{}.tif'.format(image_name,corner)
-                                    path = os.path.join(cornerPath,cornerName)
-                                    cv2.imwrite(path,F[corner][0])
-                                    
-                                    
                                     ToBeChecked = ToBeChecked.append(
                                         {'image': image_name, 
                                          'corner': corner, 
@@ -723,6 +715,9 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                         axs[0].add_patch(circle)
 
                                     else:
+                                        
+                                        
+                                        
                                         Coord[corner] = [best['u1'], best['v1']]
                                         fidu_coordinates = fidu_coordinates.append(
                                             {'image': image_name, 
@@ -735,6 +730,13 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                              'maxVal': best['maxVal']},
                                             ignore_index=True)
 
+                                    # saving corner
+                                    cornerPath = '{}/cornerToCheck'.format(image_folder)
+                                    Path(cornerPath).mkdir(parents=True, exist_ok=True)
+                                    cornerName = '{}_{}.tif'.format(image_name,corner)
+                                    path = os.path.join(cornerPath,cornerName)
+                                    cv2.imwrite(path,F[corner][0])
+                                    
                                     # save figure
                                     save_folder_path = corner_folder + '/_To_Be_Checked'
                                     
@@ -843,7 +845,7 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
             = parameters_02(image_folder, fiducial_template_folder, dataset)
 
     print("\n"
-          "corner folder: {}\nOut_fiducialmarks_CSV: {}\ncenter_fidu_tempate_CSV: {}".format(corner_folder,Out_fiducialmarks_CSV,center_fidu_tempate_CSV))
+           "corner folder: {}\nOut_fiducialmarks_CSV: {}\ncenter_fidu_tempate_CSV: {}".format(corner_folder,Out_fiducialmarks_CSV,center_fidu_tempate_CSV))
 
     ##### PARALLEL PROCESSING #####
 
@@ -883,14 +885,14 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     # print list of image corners to check (uncertainties in the template matching)
     if os.path.isfile('{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4])):
         ToBeChecked_O2 = pd.read_csv(
-             '{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4]))  # append
-        print("\n-------------------------------------------------------------------------\n "
-              "image corners to to check")
-        print(ToBeChecked_O2)
+              '{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4]))  # append
+        # print("\n-------------------------------------------------------------------------\n "
+        #       "image corners to to check")
+        # print(ToBeChecked_O2)
 
-    print("\n-------------------------------------------------------------------------\n"
-          '>>>>> fiducial coordinates saved to: {}'.format( Out_fiducialmarks_CSV))
-    print("\nYou can have a visual look at the detected fiducials in the folder:{}/_all_fiducials".format(corner_folder))
+    # print("\n-------------------------------------------------------------------------\n"
+    #       '>>>>> fiducial coordinates saved to: {}'.format( Out_fiducialmarks_CSV))
+    # print("\nYou can have a visual look at the detected fiducials in the folder:{}/_all_fiducials".format(corner_folder))
 
 
 if __name__ == "__main__":
