@@ -10,8 +10,6 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 import pandas as pd
-import cv2
-from functools import partial
 
 class AutoScrollbar(ttk.Scrollbar):
     ''' A scrollbar that hides itself if it's not needed.
@@ -32,21 +30,22 @@ class AutoScrollbar(ttk.Scrollbar):
 class Zoom_Advanced(ttk.Frame):
     ''' Advanced zoom of the image '''
 
-    def __init__(self, mainframe,dataset,path,img):
+    def __init__(self, mainframe,dataset,path,img,txt):
+        
         ''' Initialize the main Frame '''
         ttk.Frame.__init__(self, master=mainframe)        
-        self.master.title('Zoom with mouse wheel')
+        self.master.title(txt)
         self.CS=800
         self.master.minsize(self.CS+20,self.CS+20)
         
         self.x = 0
         self.y = 0
         
-        self.path = path
-        self.img = img
+        self.path = path # folder path
+        self.img = img # image name
         self.dataset = dataset
-        print("\npath =",self.path)
-        print("image =",self.img)
+        
+       
         
         # Vertical and horizontal scrollbars for canvas
         vbar = AutoScrollbar(self.master, orient='vertical')
@@ -79,24 +78,13 @@ class Zoom_Advanced(ttk.Frame):
         self.canvas.bind('<Button-5>',   self.wheel)  # only with Linux, wheel scroll down
         self.canvas.bind('<Button-4>',   self.wheel)  # only with Linux, wheel scroll up
         self.canvas.bind('<Double-Button-1>', self.clic_pixel)
-        self.image = Image.open(r'{}\{}'.format(self.path,self.img))  # open image
+        self.image = Image.open(r'{}\cornerToCheck\{}'.format(self.path,self.img))  # open image
         self.width, self.height = self.image.size
         self.imscale = 1.0  # scale for the canvaas image
         self.delta = 1.3  # zoom magnitude
         
         # Put image into container rectangle and use it to set proper coordinates to the image
         self.container = self.canvas.create_rectangle(0, 0, self.width, self.height, width=0)#,fill='red')
-        
-        
-        # Plot some optional random rectangles for the test purposes
-        # minsize, maxsize, number = 5, 20, 10
-        # for n in range(number):
-        #     x0 = random.randint(0, self.width - maxsize)
-        #     y0 = random.randint(0, self.height - maxsize)
-        #     x1 = x0 + random.randint(minsize, maxsize)
-        #     y1 = y0 + random.randint(minsize, maxsize)
-        #     color = ('red', 'orange', 'yellow', 'green', 'blue')[random.randint(0, 4)]
-        #     self.canvas.create_rectangle(x0, y0, x1, y1, fill=color, activefill='black')
 
         # Create cross 
         P1 =self.canvas.canvasx(0),  self.canvas.canvasy(0)# get visible area of the canvas
@@ -106,7 +94,7 @@ class Zoom_Advanced(ttk.Frame):
         self.line1 = self.canvas.create_line(P1, P2, fill=''),
         self.line2 = self.canvas.create_line(P1[0], P2[1],P2[0],P1[1], fill='')
 
-        self.show_image()
+        # self.show_image()
         
         # create right frame
         self.frame = tk.Frame(self.master)
@@ -119,7 +107,7 @@ class Zoom_Advanced(ttk.Frame):
         self.label.grid(row=0)
         
         
-        self.show_image()
+        # self.show_image()
         
         
 
@@ -179,6 +167,7 @@ class Zoom_Advanced(ttk.Frame):
     def show_image(self, event=None):
         ''' Show image on the Canvas '''
         self.delete_cross()
+        
         bbox1 = self.canvas.bbox(self.container)  # get image area
         # Remove 1 pixel shift at the sides of the bbox1
         bbox1 = (bbox1[0] + 1, bbox1[1] + 1, bbox1[2] - 1, bbox1[3] - 1)
@@ -214,9 +203,6 @@ class Zoom_Advanced(ttk.Frame):
             self.canvas.lower(imageid)  # set image into background
             self.canvas.imagetk = imagetk  # keep an extra reference to prevent garbage-collection
         
-        
-        
-        
         self.draw_cross()
                     
         
@@ -244,7 +230,6 @@ class Zoom_Advanced(ttk.Frame):
         self.label.grid(row=0)
 
     
-        
 #%%% draw and delete cross   
     def draw_cross(self,event=None):
         P1 =self.canvas.canvasx(0),self.canvas.canvasy(0)# get visible area of the canvas
@@ -261,12 +246,16 @@ class Zoom_Advanced(ttk.Frame):
         self.canvas.delete(self.line1)
         self.canvas.delete(self.line2)
         
-    
+        
+ #%%% get the information in a csv file   
+   
     def button_ok(self):
         
         line =pd.DataFrame ({
             'image' : self.img.split('.')[0],
             'corner': self.img.split('.')[1][4:],
+            'corner width': [self.width],
+            'corner height': [self.height],
             'x': [self.x],
             'y': [self.y]
             })
@@ -285,29 +274,31 @@ class Zoom_Advanced(ttk.Frame):
 
 #%%% Main
 
-def check_corners(dataset,path,img):
+
+def check_corners(dataset,path,img,txt):
     root=tk.Tk()
-    Zoom_Advanced(root,dataset,path,img)
+    Zoom_Advanced(root,dataset,path,img,txt)
     root.mainloop()
+
 
 if __name__ =='__main__':
     
-    
-    lieu = 'musee'
+    print('hello')
+    lieu = 'maison'
     
     if lieu == 'maison':
-        Path= r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\coins_to_check'
-        PathFid =r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\Fid_mark_template'
+        Path= r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\testzoom1\01_CanvasSized'
         
         
     elif lieu == 'musee':
         Path =r'D:\ENSG_internship_2022\Burundi_1981-82\test8\01_CanvasSized\cornerToCheck'
-        PathFid = r'D:\ENSG_internship_2022\Burundi_1981-82\Fid_mark_template'
         
-    
-    img = os.listdir(Path)[-1]
+    print(Path)
+    img = os.listdir(Path+'\cornerToCheck')[-1]
+    print(img)
     dataset = 'Burundi1981-82'
-    check_corners(dataset,Path,img)
+    txt = 'correcting {} fid mark'.format(img)
+    check_corners(dataset,Path,img,txt)
     
     
     
