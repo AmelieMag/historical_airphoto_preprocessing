@@ -10,8 +10,6 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 import pandas as pd
-import cv2
-from functools import partial
 
 class AutoScrollbar(ttk.Scrollbar):
     ''' A scrollbar that hides itself if it's not needed.
@@ -32,10 +30,10 @@ class AutoScrollbar(ttk.Scrollbar):
 class Zoom_Advanced(ttk.Frame):
     ''' Advanced zoom of the image '''
 
-    def __init__(self, mainframe,dataset,path,img):
+    def __init__(self, mainframe,dataset,path,img,text):
         ''' Initialize the main Frame '''
         ttk.Frame.__init__(self, master=mainframe)        
-        self.master.title('Zoom with mouse wheel')
+        self.master.title(text)
         self.CS=800
         self.master.minsize(self.CS+20,self.CS+20)
         
@@ -45,8 +43,6 @@ class Zoom_Advanced(ttk.Frame):
         self.path = path
         self.img = img
         self.dataset = dataset
-        print("\npath =",self.path)
-        print("image =",self.img)
         
         # Vertical and horizontal scrollbars for canvas
         vbar = AutoScrollbar(self.master, orient='vertical')
@@ -105,8 +101,6 @@ class Zoom_Advanced(ttk.Frame):
         self.circle = self.canvas.create_oval(P1, P2,outline=''),
         self.line1 = self.canvas.create_line(P1, P2, fill=''),
         self.line2 = self.canvas.create_line(P1[0], P2[1],P2[0],P1[1], fill='')
-
-        self.show_image()
         
         # create right frame
         self.frame = tk.Frame(self.master)
@@ -264,50 +258,51 @@ class Zoom_Advanced(ttk.Frame):
     
     def button_ok(self):
         
-        line =pd.DataFrame ({
-            'image' : self.img.split('.')[0],
-            'corner': self.img.split('.')[1][4:],
-            'x': [self.x],
-            'y': [self.y]
-            })
-        
-        P = self.path[:-len('cornerToCheck')] + '_fiducial_marks_coordinates_'+self.dataset+'_Checked.csv'
-        
-        print(P)
-        if not os.path.isfile(P):
-            line.to_csv(P, mode='w', header=['image', 'corner', 'x', 'y'], index=True)  # append to file
-           
+        if self.x==0 and self.y==0:
             
-        else:  # else it exists so append without writing the header
-            line.to_csv(P, mode='a', header=False, index=True)  # append to file
+            self.label = ttk.Label(self.frame, text= 'double clic to choose pixel')
+            self.label.grid(row=0)
+            
+        else:
         
-        self.master.destroy()
+            line =pd.DataFrame ({
+                'image' : self.img.split('.')[0],
+                'corner': self.img.split('.')[1][4:],
+                'corner width': [self.width],
+                'corner height': [self.height],
+                'x': [self.x],
+                'y': [self.y]
+                })
+            
+            P = self.path[:-len('cornerToCheck')] + '_fiducial_marks_coordinates_'+self.dataset+'_Checked.csv'
+            
+            if not os.path.isfile(P):
+                line.to_csv(P, mode='w', header=['image', 'corner','corner width',
+                'corner height', 'x', 'y'],sep=",", index=False)  # append to file
+               
+                
+            else:  # else it exists so append without writing the header
+                line.to_csv(P, mode='a', header=False, index=False)  # append to file
+            
+            self.master.destroy()
 
 #%%% Main
 
-def check_corners(dataset,path,img):
+def check_corners(dataset,path,img,text):
     root=tk.Tk()
-    Zoom_Advanced(root,dataset,path,img)
+    Zoom_Advanced(root,dataset,path,img,text)
     root.mainloop()
 
 if __name__ =='__main__':
     
     
-    lieu = 'musee'
-    
-    if lieu == 'maison':
-        Path= r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\coins_to_check'
-        PathFid =r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\Fid_mark_template'
-        
-        
-    elif lieu == 'musee':
-        Path =r'D:\ENSG_internship_2022\Burundi_1981-82\test8\01_CanvasSized\cornerToCheck'
-        PathFid = r'D:\ENSG_internship_2022\Burundi_1981-82\Fid_mark_template'
-        
+    Path=r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\testzoom1\01_CanvasSized\cornerToCheck'
     
     img = os.listdir(Path)[-1]
-    dataset = 'Burundi1981-82'
-    check_corners(dataset,Path,img)
+    print(img)
+    dataset = 'Usumbura_1957-58-59'
+    text = 'window title'
+    check_corners(dataset,Path,img,text)
     
     
     

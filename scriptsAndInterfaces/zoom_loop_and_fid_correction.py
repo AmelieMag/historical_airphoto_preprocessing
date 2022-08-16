@@ -6,6 +6,11 @@ Created on Thu Aug 11 16:34:15 2022
 """
 
 import os, sys
+import pandas as pd
+import numpy as np
+import cv2
+
+from PIL import Image
 
 absFilePath = os.path.abspath(__file__)
 filepath, filename = os.path.split(absFilePath)
@@ -18,35 +23,70 @@ def check(dataset,path):
     Path =path+'/cornerToCheck'
     listImage = os.listdir(Path)
     
-    for img in listImage:
-        check_corners(dataset,Path,img)
+    # i=0
+    # for img in listImage:
+    #     i+=1
+    #     text = '[{} out of {}] Correcting {} fiducial marks coordinate'.format(i,len(listImage),img)
+    #     check_corners(dataset,Path,img,text)
+    
+    fidFile = pd.read_csv(path+'/_fiducial_marks_coordinates_'+dataset+'.csv',sep=";").copy()
+    correctfidFile = pd.read_csv(path+'/_fiducial_marks_coordinates_'+dataset+'_Checked.csv',sep=",")
 
-def correct_fid(fid,correction,img):
+    newfidFile   = path+'/new_fiducial_marks_coordinates_'+dataset+'.csv'
     
-    # trouver  la taille du coin fr
+    imgName=os.listdir(path)[0]
     
-    w, h = img.shape[0],img.shape[1]
+    F=fidFile.set_index('name')
+    header = list(fidFile.columns)
+    
+    for a in  fidFile.index:
+        imgName = fidFile.loc[a]['name']
+        fid=fidFile.loc[a]
+        for i in range(len(correctfidFile)):
+            correction={}
+            if (correctfidFile.iloc[i]['image'] in imgName):
+                correctionf = correctfidFile.iloc[i].to_dict()
+                correction = correct_fid(fid,correctionf,imgName+'.tif')
+            
+               
+        fidFile.loc[a]=  correction
+            
+    fidFile.to_csv(newfidFile, mode='w', header=header,sep=",", index=True)
+    
+            
+    
+
+def correct_fid(fid,correction,imgName):
+    print(imgName)
+    img = cv2.imread(path+'/'+imgName)
+    
+    cornerW = correction['corner width'] #get corner width
+    cornerH = correction['corner height'] # get corner height
+    
+    w, h = img.shape[0],img.shape[1] # get image size
+    print(fid)
+    # correct fid coords
     if correction['corner']== 'top_left':
-        fid['x']=correction['x']
+        fid['X1'] = correction['x']
+        fid['Y1'] = correction['y']
         
-        fid['y']=correction['y']
-    elif correction['corner']== 'top_right':
+    elif correction['corner']== 'top_right':        
+        fid['X2'] = w - cornerW + correction['x']
+        fid['Y2'] = correction['y']
         
-        fid['x']=w -2500+correction['x']
-        fid['y']=correction['y']
-        
-    elif correction['corner']== 'bot_right':
-        
-        fid['x']=correction['x']
-        fid['y']=correction['y']
+    elif correction['corner']== 'bot_right':        
+        fid['X3'] = w - cornerW + correction['x']
+        fid['Y3'] = h - cornerH + correction['y']
         
     elif correction['corner']== 'bot_left': 
-        fid['x']=correction['x']  
-        fid['y']=correction['y'] 
+        fid['X4']=correction['x']
+        fid['Y4']= h - cornerH + correction['y']
+    print(fid)
+    return fid
 
 if __name__ =='__main__':
-    dataset = 'Burundi_1981-82'
-    path = r'D:\ENSG_internship_2022\Burundi_1981-82\test8\01_CanvasSized'
+    dataset = 'Usumbura_1957-58-59'
+    path = r'J:\2_SfM_READY_photo_collection\Usumbura_1957-58-59\GAPP\testzoom1\01_CanvasSized'
     
     check(dataset,path)
     

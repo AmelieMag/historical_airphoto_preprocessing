@@ -733,7 +733,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                     # saving corner
                                     cornerPath = '{}/cornerToCheck'.format(image_folder)
                                     Path(cornerPath).mkdir(parents=True, exist_ok=True)
-                                    cornerName = '{}_{}.tif'.format(image_name,corner)
+                                    cornerName = '{}_{}.png'.format(image_name,corner)
                                     path = os.path.join(cornerPath,cornerName)
                                     cv2.imwrite(path,F[corner][0])
                                     
@@ -876,10 +876,10 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     else:
         count = 1
         for image in imlist:
-            print('\n >>> Image [{}/{}]: {}'.format(str(count),str(len(imlist)),image))
+            # print('\n >>> Image [{}/{}]: {}'.format(str(count),str(len(imlist)),image))
             Main(image_folder, image, S, p, Fiducial_type, black_stripe_location,
-                 type_fidu, dataset, fiducial_template_folder,corner_folder,
-                 Out_fiducialmarks_CSV, center_fidu_tempate_CSV)
+                  type_fidu, dataset, fiducial_template_folder,corner_folder,
+                  Out_fiducialmarks_CSV, center_fidu_tempate_CSV)
             count = count + 1
 
     # print list of image corners to check (uncertainties in the template matching)
