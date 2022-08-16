@@ -31,6 +31,7 @@ class Zoom_Advanced(ttk.Frame):
     ''' Advanced zoom of the image '''
 
     def __init__(self, mainframe,dataset,path,img,text):
+        
         ''' Initialize the main Frame '''
         ttk.Frame.__init__(self, master=mainframe)        
         self.master.title(text)
@@ -63,7 +64,6 @@ class Zoom_Advanced(ttk.Frame):
         self.master.columnconfigure(0, weight=1)
         
         # Give a minimum size to the canvas
-        
         self.master.grid_columnconfigure(0,minsize=self.CS)
         self.master.grid_rowconfigure(1, minsize=self.CS)
         
@@ -90,7 +90,7 @@ class Zoom_Advanced(ttk.Frame):
         self.circle = self.canvas.create_oval(P1, P2,outline=''),
         self.line1 = self.canvas.create_line(P1, P2, fill=''),
         self.line2 = self.canvas.create_line(P1[0], P2[1],P2[0],P1[1], fill='')
-        
+                
         # create right frame
         self.frame = tk.Frame(self.master)
         self.frame.grid(row=1, column=2)
@@ -101,11 +101,10 @@ class Zoom_Advanced(ttk.Frame):
         self.label = ttk.Label(self.frame)
         self.label.grid(row=0)
         
+        self.show_image()
         
-        # self.show_image()
         
-        
-
+     
     def scroll_y(self, *args, **kwargs):
         ''' Scroll canvas vertically and redraw the image '''
         self.canvas.yview(*args, **kwargs)  # scroll vertically
@@ -193,8 +192,11 @@ class Zoom_Advanced(ttk.Frame):
             y = min(int(y2 / self.imscale), self.height)  # ...and sometimes not
             image = self.image.crop((int(x1 / self.imscale), int(y1 / self.imscale), x, y))
             imagetk = ImageTk.PhotoImage(image.resize((int(x2 - x1), int(y2 - y1))))
-            imageid = self.canvas.create_image(max(bbox2[0], bbox1[0]), max(bbox2[1], bbox1[1]),
-                                               anchor='nw', image=imagetk)
+            print('\n',imagetk,'\n')
+            imageid = self.canvas.create_image(max(bbox2[0], bbox1[0]),
+                                               max(bbox2[1], bbox1[1]),
+                                               anchor='nw',
+                                               image=imagetk)
             self.canvas.lower(imageid)  # set image into background
             self.canvas.imagetk = imagetk  # keep an extra reference to prevent garbage-collection
         
@@ -233,7 +235,6 @@ class Zoom_Advanced(ttk.Frame):
         self.circle = self.canvas.create_oval(P1, P2,outline='red'),
         self.line1 = self.canvas.create_line(P1, P2, fill='red'),
         self.line2 = self.canvas.create_line(P1[0], P2[1],P2[0],P1[1], fill='red')
-        # self.show_image()
         
         
     def delete_cross(self,event=None):
@@ -262,81 +263,32 @@ class Zoom_Advanced(ttk.Frame):
                 'y': [self.y]
                 })
             
-            P = self.path[:-len('cornerToCheck')] + '_fiducial_marks_coordinates_'+self.dataset+'_Checked.csv'
             
-            if not os.path.isfile(P):
-                line.to_csv(P, mode='w', header=['image', 'corner','corner width',
-                'corner height', 'x', 'y'],sep=",", index=False)  # append to file
+            P = self.path[:-len('cornerToCheck')] + '_fiducial_marks_coordinates_'+self.dataset+'_Checked.csv'
+            print('it works')
+            # if not os.path.isfile(P):
+            #     line.to_csv(P, mode='w', header=['image', 'corner','corner width',
+            #     'corner height', 'x', 'y'],sep=",", index=False)  # append to file
                
                 
-            else:  # else it exists so append without writing the header
-                line.to_csv(P, mode='a', header=False, index=False)  # append to file
+            # else:  # else it exists so append without writing the header
+            #     line.to_csv(P, mode='a', header=False, index=False)  # append to file
             
             self.master.destroy()
 
 #%%% Main
 
-def check_corners(dataset,path,img,text):
-    root=tk.Tk()
-    Zoom_Advanced(root,dataset,path,img,text)
-    root.mainloop()
+def check_corners(win,dataset,path,img,text):
+    Zoom_Advanced(win,dataset,path,img,text)
 
 
 if __name__ =='__main__':
     
-    
-    Path=r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\testzoom1\01_CanvasSized\cornerToCheck'
-    
-    img = os.listdir(Path)[-1]
-    print(img)
-    dataset = 'Usumbura_1957-58-59'
-    text = 'window title'
-    check_corners(dataset,Path,img,text)
-
-    print('hello')
-    lieu = 'maison'
-    
-    if lieu == 'maison':
-        Path= r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\testzoom1\01_CanvasSized'
-        
-        
-    elif lieu == 'musee':
-        Path =r'D:\ENSG_internship_2022\Burundi_1981-82\test8\01_CanvasSized\cornerToCheck'
-        
-    print(Path)
+    Path=r'D:\ENSG_internship_2022\Burundi_1981-82\test10\01_CanvasSized'
     img = os.listdir(Path+'\cornerToCheck')[-1]
-    print(img)
-    dataset = 'Burundi1981-82'
     txt = 'correcting {} fid mark'.format(img)
+    dataset = 'Burundi1981-82'
+    
     check_corners(dataset,Path,img,txt)
     
     
-    
-#%%%    
-    
-    # Import the required libraries
-    
-    
-    # from tkinter import *
-    
-    # # Create an instance of tkinter frame or window
-    # win=Tk()
-    
-    # # Set the size of the tkinter window
-    # win.geometry("700x350")
-    
-    # # Define a function to delete the shape
-    # def on_click():
-    #    canvas.delete(line)
-    
-    # # Create a canvas widget
-    # canvas=Canvas(win, width=500, height=300)
-    # canvas.pack()
-    
-    # # Add a line in canvas widget
-    # line=canvas.create_line(100,200,200,35, fill="red", width=10)
-    
-    # # Create a button to delete the button
-    # Button(win, text="Delete Shape", command=on_click).pack()
-    
-    # win.mainloop()

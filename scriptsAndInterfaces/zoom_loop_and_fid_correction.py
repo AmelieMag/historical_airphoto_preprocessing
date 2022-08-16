@@ -7,10 +7,7 @@ Created on Thu Aug 11 16:34:15 2022
 
 import os, sys
 import pandas as pd
-import numpy as np
 import cv2
-
-from PIL import Image
 
 absFilePath = os.path.abspath(__file__)
 filepath, filename = os.path.split(absFilePath)
@@ -19,15 +16,16 @@ sys.path.insert(0, '{}/scriptsAndInterfaces'.format(filepath))  # Local imports
 
 from zoom_and_move_app import check_corners
 
-def check(dataset,path):
+def Main_correction_fid_marks(win,dataset,path):
     Path =path+'/cornerToCheck'
     listImage = os.listdir(Path)
     i=0
     
-    # for img in listImage:
-    #     i+=1
-    #     text = '[{} out of {}] Correcting {} fiducial marks coordinate'.format(i,len(listImage),img)
-    #     check_corners(dataset,Path,img,text)
+    # Point manualy fid marks
+    for img in listImage:
+        i+=1
+        text = '[{} out of {}] Correcting {} fiducial marks coordinate'.format(i,len(listImage),img)
+        check_corners(win,dataset,path,img,text)
     
     fidFile = pd.read_csv(path+'/_fiducial_marks_coordinates_'+dataset+'.csv',sep=";").copy()
     correctfidFile = pd.read_csv(path+'/_fiducial_marks_coordinates_'+dataset+'_Checked.csv',sep=",")
@@ -38,6 +36,8 @@ def check(dataset,path):
     
     header = list(fidFile.columns)
     
+    # create a new fid mark folder
+    # TODO : make it rewrite the fid marks csv file
     for a in  fidFile.index:
         imgName = fidFile.loc[a]['name']
         fid=fidFile.loc[a]
@@ -52,11 +52,6 @@ def check(dataset,path):
             
     fidFile.to_csv(newfidFile, mode='w', header=header,sep=",", index=True)
     
-          
-    for img in listImage:
-        i+=1
-        txt = 'checking {} fiducial mark [{} out of {}]'.format(img,i,len(listImage))
-        check_corners(dataset,Path,img,txt)
 
 def correct_fid(fid,correction,imgName):
     print(imgName)
@@ -65,8 +60,8 @@ def correct_fid(fid,correction,imgName):
     cornerW = correction['corner width'] #get corner width
     cornerH = correction['corner height'] # get corner height
     
-    w, h = img.shape[0],img.shape[1] # get image size
-    print(fid)
+    w, h = img.shape[0],img.shape[1] # get image size 
+    
     # correct fid coords
     if correction['corner']== 'top_left':
         fid['X1'] = correction['x']
@@ -88,7 +83,7 @@ def correct_fid(fid,correction,imgName):
 
 if __name__ =='__main__':
     dataset = 'Usumbura_1957-58-59'
-    path = r'J:\2_SfM_READY_photo_collection\Usumbura_1957-58-59\GAPP\testzoom1\01_CanvasSized'
+    path = r'D:\ENSG_internship_2022\Burundi_1981-82\test10\01_CanvasSized'
     
-    check(dataset,path)
+    Main_correction_fid_marks(dataset,path)
     

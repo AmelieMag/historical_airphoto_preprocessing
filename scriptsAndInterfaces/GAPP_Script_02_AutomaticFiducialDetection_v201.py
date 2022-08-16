@@ -407,7 +407,7 @@ def systeme(a1, b1, c1, a2, b2, c2):
     else:
         y = (c2*a1-c1*a2)/(a1*b2-a2*b1)
         x = (c1-b1*y)/a1
-        print('x =', round(x, 0), "", 'y =', round(y, 0))
+        # print('x =', round(x, 0), "", 'y =', round(y, 0))
     return x, y
 
 
@@ -444,7 +444,7 @@ def select_fiducial_corners(img, S, p, Fidu_type, black_stripe_location):
         u_right = U - S
         v_top = 0
         v_bot = V - S
-
+        
         # Update for black strip:
         if 'top' in black_stripe_location:
             v_top = v_top + int(p*V)
@@ -453,7 +453,7 @@ def select_fiducial_corners(img, S, p, Fidu_type, black_stripe_location):
             v_bot = v_bot - int(p*V)
             
         if 'left' in black_stripe_location:
-            u_left = u_left + int(p * U)
+            u_left = u_left + int(p*U)
             
         if 'right' in black_stripe_location:
             u_right = u_right - int(p*U)
@@ -745,7 +745,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                     plt.savefig(save_folder_path + '/_ToCheck_' + image_name + '_'+corner + '.png', dpi=DPI)
 
                         if len(Coord) == 4 and template_name == template_list[-1] and corner == list(F.keys())[-1]:
-                            print("  >> " + image_name + ' > found for fiducial coordinates: ' + str(Coord))
+                            # print("  >> " + image_name + ' > found for fiducial coordinates: ' + str(Coord))
                             
                             # Add to CSV file
                             addLine(image_name, Coord, Out_fiducialmarks_CSV)
@@ -845,8 +845,8 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
             MatchingValueThreshold, DPI, Fiducial_type, num_cores\
             = parameters_02(image_folder, fiducial_template_folder, dataset)
 
-    print("\n"
-           "corner folder: {}\nOut_fiducialmarks_CSV: {}\ncenter_fidu_tempate_CSV: {}".format(corner_folder,Out_fiducialmarks_CSV,center_fidu_tempate_CSV))
+    # print("\n"
+    #        "corner folder: {}\nOut_fiducialmarks_CSV: {}\ncenter_fidu_tempate_CSV: {}".format(corner_folder,Out_fiducialmarks_CSV,center_fidu_tempate_CSV))
 
     ##### PARALLEL PROCESSING #####
 

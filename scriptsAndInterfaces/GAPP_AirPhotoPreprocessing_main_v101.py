@@ -45,7 +45,7 @@ Notes:
 
 from GAPP_Script_01_AirPhoto_CanvasSizing_v201 import main_script_01
 from GAPP_Script_02_AutomaticFiducialDetection_v201 import main_script_02
-# from GAPP_Script_02_AutomaticFiducialDetection_v201_test import main_script_02
+from zoom_loop_and_fid_correction import Main_correction_fid_marks
 from GAPP_Script_03_AirPhoto_Reprojection_v201 import main_script_03
 from GAPP_Script_04_AirPhotos_Resize_v201 import main_script_04
 from GAPP_Script_05_AirPhoto_CreateSingleMask_v101 import main_script_05
@@ -59,7 +59,7 @@ sys.path.insert(0, '')  # Local imports
 
 def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
                 stripes, chosen_camera, chosen_input_res, chosen_output_res,
-                chosen_HistoCal, chosen_SharpIntensity, S1=0, S2=0, S3=0, S4=0,S5=0, Steps=''):
+                chosen_HistoCal, chosen_SharpIntensity, S1=0, S2=0, S3=0, S4=0,S5=0,S6=0, Steps=''):
     """
     Parameters
     ----------
@@ -116,19 +116,17 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
     chosen_HistoCal_0 = str(chosen_HistoCal)
     chosen_SharpIntensity_0 = float(chosen_SharpIntensity)
     
-    if __name__ != '__main__':        
-        input_0 = input_folder[0]
-        output_folder = output_folder[0]
+    if __name__ != '__main__':
         print('output folder = {}'.format(output_folder))
+        
         Steps = {'Script_01': S1.get(), 'Script_02': S2.get(), 
-                 'Script_03': S3.get(), 'Script_04':S4.get(), 'Script_05':S5.get()}
-        template_0 = template_folder[0]
+                 'Script_03': S3.get(), 'Script_04':S4.get(), 'Script_05':S5.get(),'Script_06':S6.get()}
+        
         dataset_0 = dataset.get()
         chosen_p_0 = float(chosen_p)
         stripes_0 = stripes.get()
         camera = str(chosen_camera.get())
-        chosen_input_res = int(chosen_input_res.get())
-        chosen_output_res = int(chosen_output_res.get())
+        print(chosen_input_res)
         
     
     output_canvas_sized = '{}/{}'.format(output_folder, '01_CanvasSized')
@@ -145,6 +143,7 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
     # select the resolution file corresponding to the good camera
     resolution_file = r"{}/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(path,camera)
         
+    print(output_folder)
     if '01_CanvasSized' in os.listdir(output_folder) and Steps['Script_01'] == 1:
         shutil.rmtree('{}/01_CanvasSized'.format(output_folder))
         print('01_CanvasSized cleared')
@@ -169,6 +168,10 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
     # 02_AutomaticFiducialDetection
     if Steps['Script_02'] == 1:
         main_script_02(output_canvas_sized, template_0,dataset_0, chosen_p_0, stripes_0)
+        print('check path =',output_canvas_sized)
+        Main_correction_fid_marks(dataset,output_canvas_sized)
+    
+    
     # 03_Reprojection
     if Steps['Script_03'] == 1:
         main_script_03(output_canvas_sized, output_reprojected, fiducialmarks_file, camera, resolution_file, chosen_input_res)
@@ -178,6 +181,8 @@ def main_script(input_folder, output_folder, template_folder, dataset, chosen_p,
     # 05_Mask
     if Steps['Script_05'] == 1:
         main_script_05(output_resized, output_mask,dataset_0)
+    if Steps['Script_06']==1:
+        Main_correction_fid_marks(dataset,output_canvas_sized)
     print('fini')
 
 #############################################################################################
