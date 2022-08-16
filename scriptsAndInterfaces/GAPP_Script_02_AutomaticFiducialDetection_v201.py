@@ -534,7 +534,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
     Coord = {}
     ToBeChecked = pd.DataFrame(columns=['image', 'corner', 'x', 'y', 'maxVal'])
     fidu_coordinates = pd.DataFrame(columns=['image', 'corner', 'template', 'xc', 'yc', 'u1', 'v1', 'maxVal'])
-    toCheck=False
+    
     
     for corner in F_area:
         # -------------------------------------------------------------------------------------
@@ -788,6 +788,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
         else:  # else it exists so append without writing the header
             ToBeChecked.to_csv(Out_fiducialmarks_CSV[:-4] + '_TobeChecked.csv', mode='a', header=False)  # append to file
 
+  
 
 # defaulting parameters for running in tkinter
 def parameters_02(input_image_folder, fiducial_template_folder, dataset):
@@ -884,8 +885,7 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
 
     # print list of image corners to check (uncertainties in the template matching)
     if os.path.isfile('{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4])):
-        ToBeChecked_O2 = pd.read_csv(
-              '{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4]))  # append
+        ToBeChecked_O2 = pd.read_csv('{}_TobeChecked.csv'.format(Out_fiducialmarks_CSV[:-4]))  # append
         # print("\n-------------------------------------------------------------------------\n "
         #       "image corners to to check")
         # print(ToBeChecked_O2)
@@ -894,6 +894,7 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     #       '>>>>> fiducial coordinates saved to: {}'.format( Out_fiducialmarks_CSV))
     # print("\nYou can have a visual look at the detected fiducials in the folder:{}/_all_fiducials".format(corner_folder))
 
+    
 
 if __name__ == "__main__":
     main_script_02(image_folder, fiducial_template_folder,

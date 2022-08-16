@@ -22,8 +22,8 @@ from zoom_and_move_app import check_corners
 def check(dataset,path):
     Path =path+'/cornerToCheck'
     listImage = os.listdir(Path)
+    i=0
     
-    # i=0
     # for img in listImage:
     #     i+=1
     #     text = '[{} out of {}] Correcting {} fiducial marks coordinate'.format(i,len(listImage),img)
@@ -36,7 +36,6 @@ def check(dataset,path):
     
     imgName=os.listdir(path)[0]
     
-    F=fidFile.set_index('name')
     header = list(fidFile.columns)
     
     for a in  fidFile.index:
@@ -53,8 +52,11 @@ def check(dataset,path):
             
     fidFile.to_csv(newfidFile, mode='w', header=header,sep=",", index=True)
     
-            
-    
+          
+    for img in listImage:
+        i+=1
+        txt = 'checking {} fiducial mark [{} out of {}]'.format(img,i,len(listImage))
+        check_corners(dataset,Path,img,txt)
 
 def correct_fid(fid,correction,imgName):
     print(imgName)
@@ -81,7 +83,7 @@ def correct_fid(fid,correction,imgName):
     elif correction['corner']== 'bot_left': 
         fid['X4']=correction['x']
         fid['Y4']= h - cornerH + correction['y']
-    print(fid)
+        
     return fid
 
 if __name__ =='__main__':
