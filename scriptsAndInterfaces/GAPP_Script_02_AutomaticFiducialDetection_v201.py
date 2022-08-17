@@ -532,7 +532,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
     F_area = F.keys()
     
     Coord = {}
-    ToBeChecked = pd.DataFrame(columns=['image', 'corner', 'x', 'y', 'maxVal'])
+    ToBeChecked = pd.DataFrame(columns=['image', 'corner', 'x', 'y', 'maxVal','is Check'])
     fidu_coordinates = pd.DataFrame(columns=['image', 'corner', 'template', 'xc', 'yc', 'u1', 'v1', 'maxVal'])
     
     
@@ -655,7 +655,8 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                          'yc': yc,
                                          'u1': best['u1'], 
                                          'v1': best['v1'],
-                                         'maxVal': best['maxVal']},
+                                         'maxVal': best['maxVal'],
+                                         'is Check':False},
                                         ignore_index=True)
 
                                 else:
@@ -664,7 +665,8 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                                          'corner': corner, 
                                          'x': best['u1'], 
                                          'y': best['v1'],
-                                         'maxVal': best['maxVal']},
+                                         'maxVal': best['maxVal'],
+                                         'is Check':False},
                                         ignore_index=True)
 
                                     # Try with circle
@@ -767,7 +769,8 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
                      'corner': corner,
                      'x': 0,
                      'y': 0,
-                     'maxVal': 0},
+                     'maxVal': 0,
+                     'is Check':False},
                     ignore_index=True)
 
                 fidu_coordinates = fidu_coordinates.append(
@@ -783,7 +786,7 @@ def Main(image_folder, image_name, S, p, Fidu_type, black_stripe_location, type_
         # write to file
         if not os.path.isfile(Out_fiducialmarks_CSV[:-4] + '_TobeChecked.csv'):
             ToBeChecked.to_csv(Out_fiducialmarks_CSV[:-4] + '_TobeChecked.csv',
-                               mode='w', header=['image', 'corner', 'x', 'y', 'maxVal'])  # append to file
+                               mode='w', header=['image', 'corner', 'x', 'y', 'maxVal','is Check'])  # append to file
             
         else:  # else it exists so append without writing the header
             ToBeChecked.to_csv(Out_fiducialmarks_CSV[:-4] + '_TobeChecked.csv', mode='a', header=False)  # append to file

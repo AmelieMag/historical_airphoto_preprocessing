@@ -58,6 +58,7 @@ sys.path.insert(0, '{}/scriptsAndInterfaces'.format(filepath))  # Local imports
 # from GAPP_AirPhotoPreprocessing_main_v101 import main_script
 from interface_FiducialTemplateCreator_v101 import interface_fiducial_template
 from zoom_loop_and_fid_correction import Main_correction_fid_marks
+from zoom_and_move_app import check_corners, Zoom_Advanced
 
 from GAPP_Script_01_AirPhoto_CanvasSizing_v201 import main_script_01
 from GAPP_Script_02_AutomaticFiducialDetection_v201 import main_script_02
@@ -96,7 +97,7 @@ class GAPP(ttk.Frame):
         self.master.option_add('*Font', 'TkMenuFont')  # define font
         
         
-        self.path='/'
+        self.path=r'J:\2_SfM_READY_photo_collection\Usumbura_1957-58-59'
         
         # add epmty label for better spacing
         tk.Label(self.master, text="  ").grid(row=12, column=0, columnspan=9, sticky="nsew")
@@ -156,7 +157,7 @@ class GAPP(ttk.Frame):
         label_dataset = tk.Label(self.master, textvariable=self.labeltext_dataset)
         label_dataset.grid(row=13, columnspan=2, sticky="w")
         
-        self.dataset = tk.StringVar(self.master, value="Burundi_1981-82")
+        self.dataset = tk.StringVar(self.master, value="Usumbura_1957-58-59")
         entry_dataset = tk.Entry(self.master, textvariable=self.dataset)
         entry_dataset.grid(row=14, column=1, columnspan=2, sticky="nsew")
         
@@ -306,6 +307,10 @@ class GAPP(ttk.Frame):
         script4button.grid(row=32, column=2, sticky="news")
         script5button.grid(row=32, column=3, sticky="news")
         
+        
+        self.checkFrame = ttk.Frame(self.master)
+        self.checkFrame.grid (column=12 ,row=1, rowspan=36)
+        
     
     def check_dataset(self,fiducial_template_folder):
         FM = pd.read_csv('{}/{}'.format(fiducial_template_folder,
@@ -363,7 +368,7 @@ class GAPP(ttk.Frame):
         folder.set(filedialog.askdirectory(initialdir=self.path, title=text))
         e.insert(0, folder.get())
         folder = folder.get()
-        print(folder)
+        
         self.path=folder
         self.create_intermediate_folder()
         
@@ -385,6 +390,7 @@ class GAPP(ttk.Frame):
         if '01_CanvasSized' in os.listdir(self.path_out_fold.get()):
             shutil.rmtree('{}/01_CanvasSized'.format(self.path_out_fold.get()))
             print('01_CanvasSized cleared')
+            
         main_script_01(self.path_in_fold.get(),  self.output_canvas_sized)
         
     def run_script_02(self):
@@ -403,46 +409,13 @@ class GAPP(ttk.Frame):
         main_script_05(self.output_resized, self.output_mask,self.dataset)
     
     def run_script_check_fid(self):
-        win=tk.Tk()
-        Main_correction_fid_marks(win,self.dataset,self.output_canvas_sized)
-        win.mainloop()
         
-            
+        print(self.dataset.get())
+        print(self.output_canvas_sized)
         
+        Zoom_Advanced(self.checkFrame,self.dataset.get(),self.output_canvas_sized)
         
-        # def main_script_launch():
-        #     if len(self.path_in_fold.get())==0:
-        #         labeltext_input_folder.set('   Aerial images folder: please select folder')
-        #         label_input_folder.config(fg='red')
-        #     elif len(self.path_out_fold.get())==0:
-        #         label_input_folder.config(fg='black')
-        #         labeltext_output_folder.set('   Output folder: please select folder')
-        #         label_output_folder.config(fg='red')
-        #     elif len(self.path_template_fold.get())==0:
-        #         labeltext_template_folder.set('   Fiducial template folder: please select folder')
-        #         label_template_folder.config(fg='red')
-        #     elif len(dataset.get())==0:
-        #         labeltext_dataset.set("Please choose a dataset")
-        #         label_dataset.config(fg='red')
-        #     else : 
-                
-        #         # ttk.Button(self.master,command=Main_correction_fid_marks(dataset,'{}/01_CanvasSized'.format(output_folder[0])),text='chekfidmarks').grid()
-        #         main_script(self.path_in_fold.get(), self.path_out_fold.get(), self.path_template_fold.get(),
-        #                     dataset, chosen_p, stripes, chosen_camera, chosen_input_res,
-        #                     chosen_output_res, chosen_HistoCal, chosen_SharpIntensity,
-        #                     check_01, check_02, check_03, check_04, check_05, check_06)
-                
-        #         # self.master.destroy()
-        
-    
-        # # defined a window size to be sure it doesn't change over time
-        # self.master.geometry()
-        # self.master.resizable(width=tk.TRUE, height=tk.TRUE)
-        
-        # runButton = ttk.Button(self.master,text='run',command=lambda: main_script_launch())
-        # runButton.grid(columnspan=9,row=36)
-        
-    # End of interface
+        # check_corners(self.dataset.get(),self.output_canvas_sized)
 
     
 

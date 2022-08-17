@@ -8,8 +8,16 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-import os
+import os,sys
 import pandas as pd
+
+
+absFilePath = os.path.abspath(__file__)
+filepath, filename = os.path.split(absFilePath)
+
+sys.path.insert(0, '{}/scriptsAndInterfaces'.format(filepath))
+
+from zoom_loop_and_fid_correction import Main_correction_fid_marks
 
 class AutoScrollbar(ttk.Scrollbar):
     ''' A scrollbar that hides itself if it's not needed.
@@ -30,20 +38,25 @@ class AutoScrollbar(ttk.Scrollbar):
 class Zoom_Advanced(ttk.Frame):
     ''' Advanced zoom of the image '''
 
-    def __init__(self, mainframe,dataset,path,img,text):
+    def __init__(self, mainframe,dataset,path):
         
         ''' Initialize the main Frame '''
+        
+        self.i = 0
         ttk.Frame.__init__(self, master=mainframe)        
-        self.master.title(text)
         self.CS=800
-        self.master.minsize(self.CS+20,self.CS+20)
+        # self.master.minsize(self.CS+20,self.CS+20)
         
         self.x = 0
         self.y = 0
         
         self.path = path # folder path
-        self.img = img # image name
+        self.img = os.listdir(self.path+'\cornerToCheck')[self.i] # image name
         self.dataset = dataset
+        
+        # self.master.title('[{} out of {}] Correcting {} fiducial marks coordinate'.format(self.i+1,len(os.listdir(self.path+'\cornerToCheck')),self.img))
+        self. L = ttk.Label(self.master,text ='[{} out of {}] Correcting {} fiducial marks coordinate'.format(self.i+1,len(os.listdir(self.path+'\cornerToCheck')),self.img))
+        self.L.grid(row=0)
         
         # Vertical and horizontal scrollbars for canvas
         vbar = AutoScrollbar(self.master, orient='vertical')
@@ -54,8 +67,10 @@ class Zoom_Advanced(ttk.Frame):
         # Create canvas and put image on it
         self.canvas = tk.Canvas(self.master, highlightthickness=0,
                                 xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+        self.canvas.config(width=self.CS,height=self.CS)
         self.canvas.grid(row=1, column=0, sticky='nswe')
         self.canvas.update()  # wait till canvas is created
+        
         vbar.configure(command=self.scroll_y)  # bind scrollbars to the canvas
         hbar.configure(command=self.scroll_x)
 
@@ -66,7 +81,7 @@ class Zoom_Advanced(ttk.Frame):
         # Give a minimum size to the canvas
         self.master.grid_columnconfigure(0,minsize=self.CS)
         self.master.grid_rowconfigure(1, minsize=self.CS)
-        
+                
         # Bind events to the Canvas
         self.canvas.bind('<Configure>', self.show_image)  # canvas is resized
         self.canvas.bind('<ButtonPress-1>', self.move_from)
@@ -75,8 +90,12 @@ class Zoom_Advanced(ttk.Frame):
         self.canvas.bind('<Button-5>',   self.wheel)  # only with Linux, wheel scroll down
         self.canvas.bind('<Button-4>',   self.wheel)  # only with Linux, wheel scroll up
         self.canvas.bind('<Double-Button-1>', self.clic_pixel)
+        
+        
         self.image = Image.open(r'{}\cornerToCheck\{}'.format(self.path,self.img))  # open image
         self.width, self.height = self.image.size
+        
+        
         self.imscale = 1.0  # scale for the canvaas image
         self.delta = 1.3  # zoom magnitude
         
@@ -95,13 +114,15 @@ class Zoom_Advanced(ttk.Frame):
         self.frame = tk.Frame(self.master)
         self.frame.grid(row=1, column=2)
         
-        self.button = ttk.Button(self.frame, text="ok",command=self.button_ok)
-        self.button.grid(row=1)
+        self.buttonOk = ttk.Button(self.frame, text="ok",command=self.button_ok)
+        self.buttonOk.grid(row=1)
         
         self.label = ttk.Label(self.frame)
         self.label.grid(row=0)
         
         self.show_image()
+                
+        self.check = pd.read_csv(self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked'in file][0])['is Check']
         
         
      
@@ -192,7 +213,6 @@ class Zoom_Advanced(ttk.Frame):
             y = min(int(y2 / self.imscale), self.height)  # ...and sometimes not
             image = self.image.crop((int(x1 / self.imscale), int(y1 / self.imscale), x, y))
             imagetk = ImageTk.PhotoImage(image.resize((int(x2 - x1), int(y2 - y1))))
-            print('\n',imagetk,'\n')
             imageid = self.canvas.create_image(max(bbox2[0], bbox1[0]),
                                                max(bbox2[1], bbox1[1]),
                                                anchor='nw',
@@ -229,6 +249,7 @@ class Zoom_Advanced(ttk.Frame):
     
 #%%% draw and delete cross   
     def draw_cross(self,event=None):
+        
         P1 =self.canvas.canvasx(0),self.canvas.canvasy(0)# get visible area of the canvas
         P2 =self.canvas.canvasx(self.canvas.winfo_width()),self.canvas.canvasy(self.canvas.winfo_height())
         
@@ -243,16 +264,24 @@ class Zoom_Advanced(ttk.Frame):
         self.canvas.delete(self.line2)
         
         
- #%%% get the information in a csv file   
+#%%% get the information in a csv file   
    
     def button_ok(self):
+        print(self.i)
+        print(len(os.listdir(self.path+'\cornerToCheck')))
+        print(not self.check[self.i])
+        
         
         if self.x==0 and self.y==0:
             
             self.label = ttk.Label(self.frame, text= 'double clic to choose pixel')
             self.label.grid(row=0)
             
-        else:
+        elif self.i<= len(os.listdir(self.path+'\cornerToCheck')) and not self.check[self.i]:
+            
+            #display x and y
+            self.label = ttk.Label(self.frame, text= 'x ={}, y = {}'.format(self.x,self.y))
+            self.label.grid(row=0)
         
             line =pd.DataFrame ({
                 'image' : self.img.split('.')[0],
@@ -264,31 +293,53 @@ class Zoom_Advanced(ttk.Frame):
                 })
             
             
-            P = self.path[:-len('cornerToCheck')] + '_fiducial_marks_coordinates_'+self.dataset+'_Checked.csv'
-            print('it works')
-            # if not os.path.isfile(P):
-            #     line.to_csv(P, mode='w', header=['image', 'corner','corner width',
-            #     'corner height', 'x', 'y'],sep=",", index=False)  # append to file
+            P = self.path + '/_fiducial_marks_coordinates_'+self.dataset+'_Checked.csv'
+            print(line)
+            if not os.path.isfile(P):
+                line.to_csv(P, mode='w', header=['image', 'corner','corner width',
+                'corner height', 'x', 'y'],sep=",", index=False)  # append to file
                
                 
-            # else:  # else it exists so append without writing the header
-            #     line.to_csv(P, mode='a', header=False, index=False)  # append to file
+            else:  # else it exists so append without writing the header
+                line.to_csv(P, mode='a', header=False, index=False)  # append to file
             
-            self.master.destroy()
+            # self.master.destroy()
 
+            
+            self.x,self.y=0,0
+    
+            self.img =  os.listdir(self.path+'\cornerToCheck')[self.i]
+            
+            self.check.update( pd.Series([True], name='is Check', index=[self.i]))
+            
+            self.i = self.i+1
+            self.image = Image.open(r'{}\cornerToCheck\{}'.format(self.path,self.img))
+            self. L = ttk.Label(self.master,text ='[{} out of {}] Correcting {} fiducial marks coordinate'.format(self.i,len(os.listdir(self.path+'\cornerToCheck')),self.img))
+            self.L.grid(row=0)
+            self.show_image()
+            print(self.check)
+            
+            if False not in list(self.check):
+                Main_correction_fid_marks(self.dataset,self.path)
+                toCheckfile = pd.read_csv(self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked'in file][0])
+                toCheckfile.update(self.check)
+                print(toCheckfile)
+                self.master.destroy()
+            
+        
+        
 #%%% Main
 
-def check_corners(win,dataset,path,img,text):
-    Zoom_Advanced(win,dataset,path,img,text)
-
+def check_corners(dataset,path):
+    win = tk.Tk()
+    Zoom_Advanced(win,dataset,path)
+    win.mainloop()
 
 if __name__ =='__main__':
     
-    Path=r'D:\ENSG_internship_2022\Burundi_1981-82\test10\01_CanvasSized'
-    img = os.listdir(Path+'\cornerToCheck')[-1]
-    txt = 'correcting {} fid mark'.format(img)
-    dataset = 'Burundi1981-82'
+    Path=r'J:\2_SfM_READY_photo_collection\Usumbura_1957-58-59\GAPP\test13\traitement\01_CanvasSized'
+    dataset = 'Usumbura_1957-58-59'
     
-    check_corners(dataset,Path,img,txt)
+    check_corners(dataset,Path)
     
     
