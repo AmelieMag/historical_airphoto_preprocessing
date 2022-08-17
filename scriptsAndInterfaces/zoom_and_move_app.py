@@ -320,10 +320,11 @@ class Zoom_Advanced(ttk.Frame):
             print(self.check)
             
             if False not in list(self.check):
+                
                 Main_correction_fid_marks(self.dataset,self.path)
                 toCheckfile = pd.read_csv(self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked'in file][0])
                 toCheckfile.update(self.check)
-                print(toCheckfile)
+               
                 self.master.destroy()
             
         
