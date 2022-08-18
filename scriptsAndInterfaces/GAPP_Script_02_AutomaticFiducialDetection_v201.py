@@ -121,7 +121,7 @@ corner_folder = r"C:\Users\adille\Desktop\Tests\SCANs\Fiducials_Barriere\Luluabu
 
 # parameter for ShiTomasi corner detection. 'fixed' or 'barycentre'
 type_fidu = "barycentre"
-Out_fiducialmarks_CSV = r"C:\Users\adille\Desktop\Tests\SCANs\Fiducials_Barriere\Luluaburg_1959\fiducial_marks_coordinates_Luluaburg_1959.csv"  # output with the
+Out_fiducialmarks_CSV = r"F:\2_SfM_READY_photo_collection\Usumbura_1957-58-59\GAPP\test13\traitement\01_CanvasSized\_fiducial_marks_coordinates_Luluaburg_1959.csv"  # output with the
 #  location of the fiducial centre
 
 
@@ -166,13 +166,24 @@ def toCSV(image, Coo):
     :type image: string
 
     :return: line to fill the csv file (corresponding to the image)
-    :rtype : string
+    :rtype : DataFrame
     """
-    line = ";".join([os.path.splitext(os.path.basename(image))[0],
-                     str(Coo['top_left'][0]), str(Coo['top_left'][1]),
-                     str(Coo['top_right'][0]), str(Coo['top_right'][1]),
-                     str(Coo['bot_right'][0]), str(Coo['bot_right'][1]),
-                     str(Coo['bot_left'][0]), str(Coo['bot_left'][1])])
+    # line = ";".join([os.path.splitext(os.path.basename(image))[0],
+    #                  str(Coo['top_left'][0]), str(Coo['top_left'][1]),
+    #                  str(Coo['top_right'][0]), str(Coo['top_right'][1]),
+    #                  str(Coo['bot_right'][0]), str(Coo['bot_right'][1]),
+    #                  str(Coo['bot_left'][0]), str(Coo['bot_left'][1])])
+    
+    name = os.path.splitext(os.path.basename(image))[0]
+    X1,Y1 =Coo['top_left' ][0],Coo['top_left' ][1]    
+    X2,Y2 =Coo['top_right'][0],Coo['top_right'][1]
+    X3,Y3 =Coo['bot_right'][0],Coo['bot_right'][1]
+    X4,Y4 =Coo['bot_left' ][0],Coo['bot_left' ][1]
+    line = pd.DataFrame({'name':name,
+      'X1':[X1],'Y1':[Y1],
+      'X2':[X2],'Y2':[Y2],
+      'X3':[X3],'Y3':[Y3],
+      'X4':[X4],'Y4':[Y4]})
     return(line)
 
 
@@ -185,11 +196,11 @@ def addLine(image_name, Fiducial_Coordinates, Out_fiducialmarks_CSV):
 
     :return: None
     """
-    line = [toCSV(image_name, Fiducial_Coordinates)]
-    f = open(Out_fiducialmarks_CSV, "a", newline='')
-    w = csv.writer(f, delimiter=",")
-    w.writerow(line)
-    f.close()
+    line = toCSV(image_name, Fiducial_Coordinates)
+    columns = ['name','X1','Y1','X2','Y2','X3','Y3','X4','Y4']
+    f = pd.read_csv(Out_fiducialmarks_CSV)
+    f = f.append(line)
+    f.to_csv(Out_fiducialmarks_CSV,mode='w', sep=",", index=False,header=columns)
 
 
 def distance(matrice, xc, yc):
@@ -852,12 +863,11 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     #        "corner folder: {}\nOut_fiducialmarks_CSV: {}\ncenter_fidu_tempate_CSV: {}".format(corner_folder,Out_fiducialmarks_CSV,center_fidu_tempate_CSV))
 
     ##### PARALLEL PROCESSING #####
-
-    lines = [["name;X1;Y1;X2;Y2;X3;Y3;X4;Y4"]]
-    f = open(Out_fiducialmarks_CSV, "w", newline='')
-    w = csv.writer(f, delimiter=",")
-    w.writerows(lines)
-    f.close()
+    
+    columns = ['name','X1','Y1','X2','Y2','X3','Y3','X4','Y4']
+    Out_fiducialmarks = pd.DataFrame(columns=columns)
+    Out_fiducialmarks.to_csv(Out_fiducialmarks_CSV,mode="w",header=columns,index=False)
+    
     
     # List image files
     allfiles = os.listdir(image_folder)

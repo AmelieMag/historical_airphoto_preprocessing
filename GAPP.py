@@ -57,8 +57,7 @@ sys.path.insert(0, '{}/scriptsAndInterfaces'.format(filepath))  # Local imports
 
 # from GAPP_AirPhotoPreprocessing_main_v101 import main_script
 from interface_FiducialTemplateCreator_v101 import interface_fiducial_template
-from zoom_loop_and_fid_correction import Main_correction_fid_marks
-from zoom_and_move_app import check_corners, Zoom_Advanced
+from zoom_and_move_app import Zoom_Advanced
 
 from GAPP_Script_01_AirPhoto_CanvasSizing_v201 import main_script_01
 from GAPP_Script_02_AutomaticFiducialDetection_v201 import main_script_02
@@ -147,20 +146,6 @@ class GAPP(ttk.Frame):
         path = "./"
     
         ######### Initialize Entries #########
-        
-    
-    
-        # Dataset
-        
-        self.labeltext_dataset = tk.StringVar()
-        self.labeltext_dataset.set("   Dataset name:")
-        label_dataset = tk.Label(self.master, textvariable=self.labeltext_dataset)
-        label_dataset.grid(row=13, columnspan=2, sticky="w")
-        
-        self.dataset = tk.StringVar(self.master, value="Usumbura_1957-58-59")
-        entry_dataset = tk.Entry(self.master, textvariable=self.dataset)
-        entry_dataset.grid(row=14, column=1, columnspan=2, sticky="nsew")
-        
     
         # P value
         p_value_list = [0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.15, 0.20]
@@ -210,7 +195,6 @@ class GAPP(ttk.Frame):
         refreshbutton= ttk.Button(self.master, text="refresh camera list", command=self.refresh(self.chosen_camera))
         refreshbutton.grid(row=22, column=2, sticky="nsew")
         
-        self.camera=self.chosen_camera.get()
     
         # Histogram calibration
         HistoCal_value_list = ['True', 'False']
@@ -266,41 +250,31 @@ class GAPP(ttk.Frame):
                                                    "Select template directory",
                                                    self.path_temp_fold)).grid(row=10, column=8, sticky="w")
     
-        self.path_temp_folder=self.path_temp_fold.get()       
+        self.path_temp_folder=self.path_temp_fold.get()      
         
+        # Dataset
         
-    
-        # Initialize Buttons:
+        self.labeltext_dataset = tk.StringVar()
+        self.labeltext_dataset.set("   Dataset name:")
+        label_dataset = tk.Label(self.master, textvariable=self.labeltext_dataset)
+        label_dataset.grid(row=13, columnspan=2, sticky="w")
         
-        # check_01 = tk.IntVar()
-        # check_02 = tk.IntVar()
-        # check_03 = tk.IntVar()
-        # check_04 = tk.IntVar()
-        # check_05 = tk.IntVar()
-        # check_06 = tk.IntVar()
-    
-        # checkButton1 =ttk.Checkbutton(self.master, text="Script_01: Canvas Sizing",variable=check_01)
-        # checkButton2 =ttk.Checkbutton(self.master, text="Script_02: Fiducial Detection",variable=check_02)
-        # checkButton3 =ttk.Checkbutton(self.master, text="Script_03: Reproject",variable=check_03)
-        # checkButton4 =ttk.Checkbutton(self.master, text="Script_04: Downsampling",variable=check_04)
-        # checkButton5 =ttk.Checkbutton(self.master, text="Script_05: Create Mask",variable=check_05)
-        # checkButton6 =ttk.Checkbutton(self.master, text="check mark fid",variable=check_06)
+        self.dataset = tk.StringVar(self.master, value="Usumbura_1957-58-59")
+        entry_dataset = tk.Entry(self.master, textvariable=self.dataset)
+        entry_dataset.grid(row=14, column=1, columnspan=2, sticky="nsew")
         
-        # checkButton1.grid(row=31, column=1, sticky="w")
-        # checkButton2.grid(row=31, column=2, sticky="w")
-        # checkButton3.grid(row=31, column=3, sticky="w")
-        # checkButton4.grid(row=32, column=1, sticky="w")
-        # checkButton5.grid(row=32, column=2, sticky="w")
-        # checkButton6.grid(row=32, column=3, sticky="w")
+        self.checkfidButton = ttk.Button(self.master, text="Check Dataset", command=self.check_dataset)
+        self.checkfidButton.grid(row =14 , column=3,sticky="nsew")
+                
         
-        script1button = ttk.Button(self.master, text='Run Canvas sized',command=self.run_script_01)
+        script1button = ttk.Button(self.master, text='Run Canvas sized and Fiducial mark detection',command=self.run_script_01)
         script2button = ttk.Button(self.master, text='Run fid mark detection',command=self.run_script_02)
         scriptCheckbutton = ttk.Button(self.master, text='Run fid mark correction',command=self.run_script_check_fid)
         script3button = ttk.Button(self.master, text='Run Reprojection',command=self.run_script_03)
         script4button = ttk.Button(self.master, text='Run Resize',command=self.run_script_04)
         script5button = ttk.Button(self.master, text='Run Create mask',command=self.run_script_05)
         
-        script1button.grid(row=31, column=1, sticky="news")
+        script1button.grid(row=31, column=1, columnspan=2, sticky="news")#, columnspan=2)
         script2button.grid(row=31, column=2, sticky="news")
         scriptCheckbutton.grid(row=31, column=3, sticky="news")
         script3button.grid(row=32, column=1, sticky="news")
@@ -312,8 +286,8 @@ class GAPP(ttk.Frame):
         self.checkFrame.grid (column=12 ,row=1, rowspan=36)
         
     
-    def check_dataset(self,fiducial_template_folder):
-        FM = pd.read_csv('{}/{}'.format(fiducial_template_folder,
+    def check_dataset(self):
+        FM = pd.read_csv('{}/{}'.format(self.path_temp_fold,
                                         'Center_Fiduciales.txt'), sep=' ',header=None) 
         fid = [n for n in FM[:][0] if n[:len('Template_%s_top' % (self.dataset))]
                in 'Template_%s_top' % (self.dataset) or  n[:len('Template_%s_bot' % (self.dataset))]
@@ -381,8 +355,11 @@ class GAPP(ttk.Frame):
         self.output_reprojected =r'{}/{}'.format( path ,'02_Reprojected')
         self.output_resized =r'{}/{}'.format(path , '03_Resized')
         self.output_mask = r'{}/{}'.format( path , '04_Masks')
-        self.fiducialmarks_file = r'{}/_fiducial_marks_coordinates_{}.csv'.format(self.output_canvas_sized,self.dataset)
-        self.resolution_file = r"{}/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(os.path.split(os.path.abspath(__file__))[0],self.camera)
+        if os.path.isfile(r'{}/_fiducial_marks_coordinates_{}.csv'.format(self.output_canvas_sized,self.dataset.get())):
+            self.fiducialmarks_file = r'{}/new_fiducial_marks_coordinates_{}.csv'.format(self.output_canvas_sized,self.dataset.get())
+        else:
+            self.fiducialmarks_file = r'{}/_fiducial_marks_coordinates_{}.csv'.format(self.output_canvas_sized,self.dataset.get())
+        self.resolution_file = r"{}/scriptsAndInterfaces/camera/{}_Airphoto_Photo_dimensions_vs_dpi.csv".format(os.path.split(os.path.abspath(__file__))[0],self.chosen_camera.get())
         
         
         
@@ -397,16 +374,24 @@ class GAPP(ttk.Frame):
         main_script_02(self.output_canvas_sized, self.path_temp_fold.get(),self.dataset.get(), float(self.chosen_p), self.stripes.get())
         
     def run_script_03(self):
+        if '02_Reprojected' in os.listdir(self.path_out_fold.get()):
+            shutil.rmtree('{}/02_Reprojected'.format(self.path_out_fold.get()))
+            print('clear 02_Reprojected')
+        self.create_intermediate_folder()
         main_script_03(self.output_canvas_sized, self.output_reprojected, 
-                       self.fiducialmarks_file, self.camera, self.resolution_file, self.chosen_input_res.get())
+                        self.fiducialmarks_file, self.chosen_camera.get(), self.resolution_file, self.chosen_input_res.get())
     
     def run_script_04(self):
+        if '03_Resized' in os.listdir(self.path_out_fold.get()):
+            shutil.rmtree('{}/03_Resized'.format(self.path_out_fold.get()))
+            print('clear 03_Resized')
+        self.create_intermediate_folder()
         main_script_04(self.output_reprojected, self.output_resized, self.scale_percent, 
-                       self.chosen_HistoCal.get(), self.chosen_SharpIntensity.get(), 
-                       self.resolution_file, self.chosen_output_res.get())
+                       self.chosen_HistoCal.get(), int(self.chosen_SharpIntensity), 
+                       self.resolution_file, int(self.chosen_output_res.get()))
     
     def run_script_05(self):
-        main_script_05(self.output_resized, self.output_mask,self.dataset)
+        main_script_05(self.output_resized, self.output_mask,self.dataset.get())
     
     def run_script_check_fid(self):
         

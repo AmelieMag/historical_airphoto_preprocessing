@@ -109,7 +109,7 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
                                  in allfiles if filename[-5:] in [".tiff",
                                                                   ".TIFF"]]
     
-    FM = pd.read_csv(fiducialmarks_file, sep=';', header=[0]) 
+    FM = pd.read_csv(fiducialmarks_file, sep=',', header=[0]) 
     number_images = str(len(FM))
 
     ##### DISPLAY THE NUMBER OF IMAGES TO PROCESS #####
@@ -120,8 +120,8 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
     ### Coordinate of fiducial Marks depending on the resolution
     
     res_file = pd.read_csv(resolution_file, sep=',', header=[0])
-    res_col = res_file['Resolution']    
-    i = res_file.loc[res_col==input_resolution].index[0]
+    res_col = res_file['Resolution']   
+    i = res_file.loc[res_col==int(input_resolution)].index[0]
     FM_proj = [[res_file['Xp1'][i],res_file['Yp1'][i]],
                [res_file['Xp2'][i],res_file['Yp2'][i]],
                [res_file['Xp3'][i],res_file['Yp3'][i]],
@@ -143,7 +143,7 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
         dst_filename = os.path.join(input_image_folder, image)
         img = cv2.imread(dst_filename, -1)
         
-        RVB = len(img.shape)!=2 # if True img not in grayscale and the program can not work
+        RVB = len(img.shape)!=2 # if True img not in grayscale. The program can not work
         
          
         
@@ -159,7 +159,6 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
             
         else : 
             rows, cols = img.shape
-            
             print('working on image: ' + image)
         
             # Extract the image name and find the corresponding row with fiducial marks coordinates, in the CSV file
@@ -175,7 +174,6 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
         
             pts1 = np.float32([[df['X1'][x], df['Y1'][x]], [df['X2'][x], df['Y2'][x]],
                                [df['X3'][x], df['Y3'][x]], [df['X4'][x], df['Y4'][x]]])
-            print(pts1,pts2)
         
             # Reproject the image by applying the new coordinates of the fiducial marks and crop it at the provided dimensions
             M = cv2.getPerspectiveTransform(pts1, pts2)
@@ -189,12 +187,14 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
             
             
     ##### PARALLEL PROCESSING #####
-    
-    Parallel(n_jobs=num_cores, verbose=30)(
+    multiprocess = True
+    if multiprocess:
+        Parallel(n_jobs=num_cores, verbose=30)(
         delayed(reproject_and_crop)(image) for image in images_list)
-    
-    # for image in images_list:
-    #     reproject_and_crop(image)
+        
+    else:    
+        for image in images_list:
+            reproject_and_crop(image)
     
     ##### END PROCESSING #####
     sleep(3)
@@ -216,11 +216,12 @@ if __name__ == "__main__":
 
     # DIRECTORY PATHS ##### (for Windows paths, please use "//" between directories ; for Mac, simply use "/" between directories)
 
-    input_image_folder = r"D:\ENSG_internship_2022\Burundi_1981-82\test7\01_CanvasSized"
+    path = r'F:\2_SfM_READY_photo_collection\Usumbura_1957-58-59\GAPP\test13\traitement'
+    input_image_folder = path+r'\01_CanvasSized'
 
-    fiducialmarks_file = r"D:\ENSG_internship_2022\Burundi_1981-82\test7\01_CanvasSized/_fiducial_marks_coordinates_Burundi_1981-82.csv"
+    fiducialmarks_file = path+r'\01_CanvasSized/new_fiducial_marks_coordinates_Usumbura_1957-58-59.csv'
     
-    output_image_folder = r"D:\ENSG_internship_2022\Burundi_1981-82\test7\02_Reprojected"
+    output_image_folder =path+r'\02_Reprojected'
 
     if '02_Reprojected' in os.listdir(input_image_folder) :
         shutil.rmtree('{}/Reprojected'.format(input_image_folder))
