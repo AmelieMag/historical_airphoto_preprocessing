@@ -48,11 +48,8 @@ class Zoom_Advanced(ttk.Frame):
         self.dataset = dataset
         
         self.i = 0
-        self.check = pd.read_csv(
-            self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file][0])['is Check']
-        print(pd.read_csv(
-            self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file][0])['image'])
-        
+        self.check =pd.read_csv(self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file][0])
+        print('init\n',self.check)
         #define canvas size
         self.CS = 800
         
@@ -79,8 +76,6 @@ class Zoom_Advanced(ttk.Frame):
 
         # get the first image to check
         self.img = os.listdir(self.path+'\cornerToCheck')[0]  # image name
-        self.check = pd.read_csv(
-            self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file][0])['is Check']
  
         # Header
         self. L = ttk.Label(self.master, text='[1 out of {}] Correcting {} fiducial marks coordinate'.format(len(os.listdir(self.path+'\cornerToCheck')), self.img))
@@ -135,17 +130,19 @@ class Zoom_Advanced(ttk.Frame):
         self.frame = tk.Frame(self.master)
         self.frame.grid(row=1, column=2)
 
+        self.label = ttk.Label(self.frame)
+        self.label.grid(row=0)
+
         self.buttonOk = ttk.Button(
             self.frame, text="ok", command=self.button_ok)
         self.buttonOk.grid(row=1)
 
-        self.label = ttk.Label(self.frame)
-        self.label.grid(row=0)
-
         
-        self.finish()
         self.get_first_img()
         self.show_image()
+        
+        self.finish()
+        print('----')
 
         
     def scroll_y(self, *args, **kwargs):
@@ -270,6 +267,7 @@ class Zoom_Advanced(ttk.Frame):
 
         #display x and y
         self.label.configure(text='x ={}, y = {}'.format(self.x, self.y))
+        print(self.img)
 
 
 #%%% draw and delete cross
@@ -305,29 +303,45 @@ class Zoom_Advanced(ttk.Frame):
 
     def get_first_img(self):
         # find the first image to check if the check process has been interupt
-        print('helllooooooooooooooooooooooooooooooooooo')
-        if self.i < len(os.listdir(self.path+'\cornerToCheck')):
-            while self.check[self.i]:
-                if self.i < len(os.listdir(self.path+'\cornerToCheck'))-1:
-                    print(self.i)
-                    self.next_img()
-                else:
-                    break
-        print(self.img)
-            
+        i=1
+        img = self.img.split('.')[0]+'.tif'
+        c = self.img.split('.')[1][4:]
+        check = self.check.loc[self.check['image'] == img ]
+        index = check.loc[self.check['corner'] == c].index[0]
+        
+        print(check.loc[self.check['corner'] == c])
+        
+        while check.loc[index]['is Check']:           
+            print(img, c, index)
+            self.next_img()
+            self.img = os.listdir(self.path+'/cornerTocheck')[i]
+            img = self.img.split('.')[0]+'.tif'
+            c = self.img.split('.')[1][4:]
+            check = self.check.loc[self.check['image'] == img ]
+            index = check.loc[self.check['corner'] == c].index[0]
+            i+=1
             
             
             
     def next_img(self):
         
-        if self.check[self.i] and self.i < len(os.listdir(self.path+'\cornerToCheck')):
+        listdir = os.listdir(self.path+'\cornerToCheck')
+        i = listdir.index(self.img)
+        
+        if i+1 <= len(listdir):
+            self.img = listdir[i+1]
+            self.i = self.i+1        
             
-            self.i = self.i+1
-            print(self.i,len(os.listdir(self.path+'\cornerToCheck')))
-            self.img = os.listdir(self.path+'\cornerToCheck')[self.i]
-            self.image = Image.open(
-                r'{}\cornerToCheck\{}'.format(self.path, self.img))
-            self.show_image() 
+            self.image = Image.open(r'{}\cornerToCheck\{}'.format(
+                self.path, self.img))  # open image
+            self.width, self.height = self.image.size
+            
+            
+            #labels
+            self.L.configure(text='[{} out of {}] Correcting {} fiducial marks coordinate'.format(
+                        self.i+1, len(os.listdir(self.path+'\cornerToCheck')), self.img))
+            
+            self.show_image()
         else:
             self.close()
         
@@ -337,22 +351,31 @@ class Zoom_Advanced(ttk.Frame):
         self.endlabel.configure(text='creating new fiducial marks csv file\n new file name : new_fiducial_marks_coordinates_{}.csv'.format(self.dataset))
         Main_correction_fid_marks(self.dataset, self.path)
         self.master.destroy()
-        
-    def button_ok(self):
-        # check if all images are checked
-        if False not in list(self.check):
-            self.close()
-            
-        # check if a pixel has been choose
-        elif self.x == 0 and self.y == 0 and not self.check[self.i]:
-            self.label.configure(text='double clic to choose pixel')
 
-        # if a pixel has been choosed
-        elif self.i <= len(os.listdir(self.path+'\cornerToCheck')) and not self.check[self.i]:
+
+    def button_ok(self):
+        
+        img = self.img.split('.')[0]+'.tif'
+        c = self.img.split('.')[1][4:]
+        check = self.check.loc[self.check['image'] == img ]
+        index = check.loc[self.check['corner'] == c].index[0]
+        
+        if False not in list(self.check['is Check']):
+            self.close()
+        
+        if self.x == 0 and self.y == 0  :
+            self.label.configure(text='double clic to choose pixel')
             
-            self.L.configure(text='[{} out of {}] Correcting {} fiducial marks coordinate'.format(
-                self.i+1, len(os.listdir(self.path+'\cornerToCheck')), self.img))
-                        
+        elif self.x!=0 and self.y!=0 and not check.loc[index]['is Check']:
+            
+            #label
+            self.label.configure(text='x ={}, y = {}'.format(self.x, self.y))
+            
+            check.update(pd.Series([True], name='is Check', index=[index]))
+            
+            self.check.update(check)
+            print(self.check)
+            
             # ceate and add line to checked corner file for the current image
             line = pd.DataFrame({
                 'image': self.img.split('.')[0],
@@ -362,37 +385,37 @@ class Zoom_Advanced(ttk.Frame):
                 'x': [self.x],
                 'y': [self.y]
             })
-
+            
+            self.x =0
+            self.y= 0
+            
             P = self.path + '/_fiducial_marks_coordinates_'+self.dataset+'_Checked.csv'
             if not os.path.isfile(P):
                 line.to_csv(P, mode='w', header=['image', 'corner', 'corner width',
-                                                 'corner height', 'x', 'y'], sep=",", index=False)  # append to file
+                                                  'corner height', 'x', 'y'], sep=",", index=False)  # append to file
 
             else:  # else it exists so append without writing the header
                 line.to_csv(P, mode='a', header=False,
                             index=False)  # append to file
-
-            # reinitialise and display x & y
-            self.x, self.y = 0, 0
-            self.label.configure(text='x ={}, y = {}'.format(self.x, self.y))
-
             
-            # re write tocheck file to change image "is Check" column to True
-            self.check.update(pd.Series([True], name='is Check',
-                                        index=[self.i]))
-            toCheckfile = pd.read_csv(
-                self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file][0])
-            toCheckfile.update(self.check)
-
-            toCheckfile.to_csv(self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file]
-                               [0], mode='w', header=['', 'image', 'corner', 'x', 'y', 'maxVal', 'is Check'], index=False,sep=',')
-
+            self.check.to_csv(self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file][0])
+            
+            if False not in list(self.check['is Check']):
+                self.close()
+            else:
+                
+                #label
+                self.label.configure(text='x ={}, y = {}'.format(self.x, self.y))
+                self.next_img()
+                
+        else:
             self.next_img()
-            
-        elif self.i >=  len(os.listdir(self.path+'\cornerToCheck')):
+        
+        if False not in list(self.check['is Check']):
             self.close()
-
-
+            
+            # print(line)
+            
 
 #%%% Main
 

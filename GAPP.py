@@ -268,14 +268,14 @@ class GAPP(ttk.Frame):
                 
         
         script1button = ttk.Button(self.master, text='Run Canvas sized and Fiducial mark detection',command=self.run_script_01)
-        script2button = ttk.Button(self.master, text='Run fid mark detection',command=self.run_script_02)
+        # script2button = ttk.Button(self.master, text='Run fid mark detection',command=self.run_script_02)
         scriptCheckbutton = ttk.Button(self.master, text='Run fid mark correction',command=self.run_script_check_fid)
         script3button = ttk.Button(self.master, text='Run Reprojection',command=self.run_script_03)
         script4button = ttk.Button(self.master, text='Run Resize',command=self.run_script_04)
         script5button = ttk.Button(self.master, text='Run Create mask',command=self.run_script_05)
         
-        script1button.grid(row=31, column=1, columnspan=2, sticky="news")#, columnspan=2)
-        script2button.grid(row=31, column=2, sticky="news")
+        script1button.grid(row=31, column=1, columnspan=2, sticky="news")
+        # script2button.grid(row=31, column=2, sticky="news")
         scriptCheckbutton.grid(row=31, column=3, sticky="news")
         script3button.grid(row=32, column=1, sticky="news")
         script4button.grid(row=32, column=2, sticky="news")
@@ -370,7 +370,7 @@ class GAPP(ttk.Frame):
             
         main_script_01(self.path_in_fold.get(),  self.output_canvas_sized)
         
-    def run_script_02(self):
+    # def run_script_02(self):
         main_script_02(self.output_canvas_sized, self.path_temp_fold.get(),self.dataset.get(), float(self.chosen_p), self.stripes.get())
         
     def run_script_03(self):
@@ -378,6 +378,7 @@ class GAPP(ttk.Frame):
             shutil.rmtree('{}/02_Reprojected'.format(self.path_out_fold.get()))
             print('clear 02_Reprojected')
         self.create_intermediate_folder()
+        print( self.chosen_camera.get(), self.resolution_file, self.chosen_input_res.get())
         main_script_03(self.output_canvas_sized, self.output_reprojected, 
                         self.fiducialmarks_file, self.chosen_camera.get(), self.resolution_file, self.chosen_input_res.get())
     
