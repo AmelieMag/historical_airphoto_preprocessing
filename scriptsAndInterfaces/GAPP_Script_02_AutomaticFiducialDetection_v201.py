@@ -167,13 +167,7 @@ def toCSV(image, Coo):
 
     :return: line to fill the csv file (corresponding to the image)
     :rtype : DataFrame
-    """
-    # line = ";".join([os.path.splitext(os.path.basename(image))[0],
-    #                  str(Coo['top_left'][0]), str(Coo['top_left'][1]),
-    #                  str(Coo['top_right'][0]), str(Coo['top_right'][1]),
-    #                  str(Coo['bot_right'][0]), str(Coo['bot_right'][1]),
-    #                  str(Coo['bot_left'][0]), str(Coo['bot_left'][1])])
-    
+    """    
     name = os.path.splitext(os.path.basename(image))[0]
     X1,Y1 =Coo['top_left' ][0],Coo['top_left' ][1]    
     X2,Y2 =Coo['top_right'][0],Coo['top_right'][1]
@@ -184,6 +178,7 @@ def toCSV(image, Coo):
       'X2':[X2],'Y2':[Y2],
       'X3':[X3],'Y3':[Y3],
       'X4':[X4],'Y4':[Y4]})
+    
     return(line)
 
 
@@ -907,7 +902,9 @@ def main_script_02(image_folder, fiducial_template_folder, dataset, p, black_str
     #       '>>>>> fiducial coordinates saved to: {}'.format( Out_fiducialmarks_CSV))
     # print("\nYou can have a visual look at the detected fiducials in the folder:{}/_all_fiducials".format(corner_folder))
 
-    
+    print('==============================')
+    print(' FiD MARK DETECTION COMPLETED ')
+    print('==============================')
 
 if __name__ == "__main__":
     main_script_02(image_folder, fiducial_template_folder,

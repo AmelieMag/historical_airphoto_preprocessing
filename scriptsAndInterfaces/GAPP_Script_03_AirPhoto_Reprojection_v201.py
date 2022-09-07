@@ -165,6 +165,7 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
             try:
                 name_col = FM['name']
                 df = FM[name_col.str.contains(image)]
+                print(name_col == image, name_col,name )
                 x = FM.loc[name_col == image].index[0]
         
             except:  # try with an extension to the name items"
@@ -187,7 +188,7 @@ def main_script_03(input_image_folder, output_image_folder, fiducialmarks_file,
             
             
     ##### PARALLEL PROCESSING #####
-    multiprocess = True
+    multiprocess = False
     if multiprocess:
         Parallel(n_jobs=num_cores, verbose=30)(
         delayed(reproject_and_crop)(image) for image in images_list)

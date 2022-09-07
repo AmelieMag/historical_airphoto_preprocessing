@@ -96,7 +96,7 @@ class GAPP(ttk.Frame):
         self.master.option_add('*Font', 'TkMenuFont')  # define font
         
         
-        self.path=r'J:\2_SfM_READY_photo_collection\Usumbura_1957-58-59'
+        self.path=r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\bot_left_issue'
         
         # add epmty label for better spacing
         tk.Label(self.master, text="  ").grid(row=12, column=0, columnspan=9, sticky="nsew")
@@ -117,18 +117,18 @@ class GAPP(ttk.Frame):
         self.master.config(menu=menubar) # adds the menu to master
         
         # Labels
-        labeltext_input_folder = tk.StringVar()
-        labeltext_input_folder.set('   Aerial images folder:')
+        self.labeltext_input_folder = tk.StringVar()
+        self.labeltext_input_folder.set('   Aerial images folder:')
         
-        labeltext_output_folder = tk.StringVar()
-        labeltext_output_folder.set('   Output folder:')
+        self.labeltext_output_folder = tk.StringVar()
+        self.labeltext_output_folder.set('   Output folder:')
         
         labeltext_template_folder = tk.StringVar()
         labeltext_template_folder.set('   Fiducial template folder:')
         
         label1 = tk.Label(self.master, text="\n   Folders", font=('calibre', 11, 'bold'))
-        label_input_folder = tk.Label(self.master, textvariable=labeltext_input_folder)
-        label_output_folder = tk.Label(self.master, textvariable=labeltext_output_folder)
+        label_input_folder = tk.Label(self.master, textvariable=self.labeltext_input_folder)
+        label_output_folder = tk.Label(self.master, textvariable=self.labeltext_output_folder)
         label_template_folder = tk.Label(self.master, textvariable=labeltext_template_folder)
         label_template_folder_info = tk.Label(self.master, text='   templates images for 4 typical fiducial marks + associated .txt file. See Script_00_Tool_FiducialTemplateCreator', font=('calibre', 7, 'italic'))
         label5 = tk.Label(self.master, text="   Input parameters",font=('calibre', 11, 'bold'))
@@ -287,7 +287,7 @@ class GAPP(ttk.Frame):
         
     
     def check_dataset(self):
-        FM = pd.read_csv('{}/{}'.format(self.path_temp_fold,
+        FM = pd.read_csv('{}/{}'.format(self.path_temp_fold.get(),
                                         'Center_Fiduciales.txt'), sep=' ',header=None) 
         fid = [n for n in FM[:][0] if n[:len('Template_%s_top' % (self.dataset))]
                in 'Template_%s_top' % (self.dataset) or  n[:len('Template_%s_bot' % (self.dataset))]
@@ -343,7 +343,6 @@ class GAPP(ttk.Frame):
         e.insert(0, folder.get())
         folder = folder.get()
         
-        self.path=folder
         self.create_intermediate_folder()
         
     def create_intermediate_folder(self):
@@ -364,14 +363,23 @@ class GAPP(ttk.Frame):
         
         
     def run_script_01(self):
-        if '01_CanvasSized' in os.listdir(self.path_out_fold.get()):
-            shutil.rmtree('{}/01_CanvasSized'.format(self.path_out_fold.get()))
-            print('01_CanvasSized cleared')
-            
-        main_script_01(self.path_in_fold.get(),  self.output_canvas_sized)
+        run1 = False
+        if self.path_in_fold.get() != '' and  self.path_out_fold.get() != '':
+            print('button')
+            if '01_CanvasSized' in os.listdir(self.path_out_fold.get()):
+                shutil.rmtree('{}/01_CanvasSized'.format(self.path_out_fold.get()))
+                print('01_CanvasSized cleared')
+                
+            main_script_01(self.path_in_fold.get(),  self.output_canvas_sized)
+            run1 = True
+        elif self.path_in_fold.get() == '':
+            self.labeltext_input_folder.set('      Please choose an input folder')
+        elif self.path_out_fold.get() == '':
+            self.labeltext_output_folder.set('      Please choose an output folder')
         
     # def run_script_02(self):
-        main_script_02(self.output_canvas_sized, self.path_temp_fold.get(),self.dataset.get(), float(self.chosen_p), self.stripes.get())
+        if self.path_temp_fold.get()!= '' and self.dataset.get() != '' and run1:
+            main_script_02(self.output_canvas_sized, self.path_temp_fold.get(),self.dataset.get(), float(self.chosen_p), self.stripes.get())
         
     def run_script_03(self):
         if '02_Reprojected' in os.listdir(self.path_out_fold.get()):
@@ -399,7 +407,7 @@ class GAPP(ttk.Frame):
         print(self.dataset.get())
         print(self.output_canvas_sized)
         
-        Zoom_Advanced(self.checkFrame,self.dataset.get(),self.output_canvas_sized)
+        Zoom_Advanced(self.checkFrame,self.dataset.get(),self.output_canvas_sized,float(self.chosen_p),self.stripes.get())
         
         # check_corners(self.dataset.get(),self.output_canvas_sized)
 

@@ -40,7 +40,7 @@ def add_camera(camera, resh, resl, Lux,Luy,FMux,FMuy,u):
         
         print(FMux,FMux.get())
         camera = camera.get()
-        resh =resh.get()
+        resh = resh.get()
         resl = resl.get()
         Lux = Lux.get()
         Luy = Luy.get()

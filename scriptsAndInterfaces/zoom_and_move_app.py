@@ -41,11 +41,20 @@ class AutoScrollbar(ttk.Scrollbar):
 class Zoom_Advanced(ttk.Frame):
     ''' Advanced zoom of the image '''
 
-    def __init__(self, mainframe, dataset, path):
+    def __init__(self, mainframe, dataset, path,p,black_stripe_location):
         ''' Initialize the main Frame '''
+        
+        print('=============================================================================')
+        print('=                             zoom and move                                 =')
+        print('= https://stackoverflow.com/questions/41656176/tkinter-canvas-zoom-move-pan =')
+        print('=                          A. Maginot (ENSG 2022)                           =')
+        print('=============================================================================')
+        
         ttk.Frame.__init__(self, master=mainframe)
         self.path = path  # folder path
         self.dataset = dataset
+        self.p = p
+        self.black_stripe_location = black_stripe_location
         
         self.i = 0
         self.check =pd.read_csv(self.path+'/'+[file for file in os.listdir(self.path) if 'TobeChecked' in file][0])
@@ -81,9 +90,9 @@ class Zoom_Advanced(ttk.Frame):
         self. L = ttk.Label(self.master, text='[1 out of {}] Correcting {} fiducial marks coordinate'.format(len(os.listdir(self.path+'\cornerToCheck')), self.img))
         self.L.grid(row=0)
 
-        #label for the waiting in the end
-        self.endlabel =ttk.Label(self.master,text="")
-        self.endlabel.grid(sticky='nsew')
+        # #label for the waiting in the end
+        # self.endlabel =ttk.Label(self.master,text="")
+        # self.endlabel.grid(sticky='nsew')
         
         # Give a minimum size to the canvas
         self.master.grid_columnconfigure(0, minsize=self.CS)
@@ -142,7 +151,7 @@ class Zoom_Advanced(ttk.Frame):
         self.show_image()
         
         self.finish()
-        print('----')
+        
 
         
     def scroll_y(self, *args, **kwargs):
@@ -270,7 +279,7 @@ class Zoom_Advanced(ttk.Frame):
         print(self.img)
 
 
-#%%% draw and delete cross
+#%%%  (re)draw and delete cross
 
     def draw_cross(self, event=None):
 
@@ -303,33 +312,34 @@ class Zoom_Advanced(ttk.Frame):
 
     def get_first_img(self):
         # find the first image to check if the check process has been interupt
-        i=1
-        img = self.img.split('.')[0]+'.tif'
-        c = self.img.split('.')[1][4:]
-        check = self.check.loc[self.check['image'] == img ]
-        index = check.loc[self.check['corner'] == c].index[0]
-        
-        print(check.loc[self.check['corner'] == c])
-        
-        while check.loc[index]['is Check']:           
-            print(img, c, index)
-            self.next_img()
-            self.img = os.listdir(self.path+'/cornerTocheck')[i]
+        if False in self.check['is Check'].values:
+            i=1
             img = self.img.split('.')[0]+'.tif'
             c = self.img.split('.')[1][4:]
             check = self.check.loc[self.check['image'] == img ]
             index = check.loc[self.check['corner'] == c].index[0]
-            i+=1
+            
+            # print(check.loc[self.check['corner'] == c])
+            
+            while check.loc[index]['is Check']:           
+                # print(img, c, index)
+                self.next_img()
+                self.img = os.listdir(self.path+'/cornerTocheck')[i]
+                img = self.img.split('.')[0]+'.tif'
+                c = self.img.split('.')[1][4:]
+                check = self.check.loc[self.check['image'] == img ]
+                index = check.loc[self.check['corner'] == c].index[0]
+                i+=1
             
             
             
     def next_img(self):
         
         listdir = os.listdir(self.path+'\cornerToCheck')
-        i = listdir.index(self.img)
-        
-        if i+1 <= len(listdir):
-            self.img = listdir[i+1]
+        j = listdir.index(self.img)
+        j+=1
+        if j < len(listdir):
+            self.img = listdir[j]
             self.i = self.i+1        
             
             self.image = Image.open(r'{}\cornerToCheck\{}'.format(
@@ -348,9 +358,12 @@ class Zoom_Advanced(ttk.Frame):
         
     def close(self):
         self.canvas.destroy()
-        self.endlabel.configure(text='creating new fiducial marks csv file\n new file name : new_fiducial_marks_coordinates_{}.csv'.format(self.dataset))
-        Main_correction_fid_marks(self.dataset, self.path)
+        Main_correction_fid_marks(self.dataset, self.path,self.p,self.black_stripe_location)
         self.master.destroy()
+        
+        print('==========================================')
+        print('=           Process Completed            =')
+        print('==========================================')
 
 
     def button_ok(self):
@@ -374,7 +387,6 @@ class Zoom_Advanced(ttk.Frame):
             check.update(pd.Series([True], name='is Check', index=[index]))
             
             self.check.update(check)
-            print(self.check)
             
             # ceate and add line to checked corner file for the current image
             line = pd.DataFrame({
@@ -421,13 +433,13 @@ class Zoom_Advanced(ttk.Frame):
 
 def check_corners(dataset, path):
     win = tk.Tk()
-    Zoom_Advanced(win, dataset, path)
+    Zoom_Advanced(win, dataset, path,0.04,'right')
     win.mainloop()
 
 
 if __name__ == '__main__':
 
-    Path = r'F:\2_SfM_READY_photo_collection\Usumbura_1957-58-59\GAPP\test13\traitement\01_CanvasSized'
+    Path = r'C:\Users\AmelieMaginot\Documents\ING_2\StageMRAC\bot_left_issue\testusumbura\01_CanvasSized'
     dataset = 'Usumbura_1957-58-59'
 
     check_corners(dataset, Path)

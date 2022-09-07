@@ -33,6 +33,7 @@ In spyder open GAPP.py and run it with F5 keyboard command or with the green arr
 ## 3. Application 
 
 The following window will be open: 
+
 ![Main window](images\capturedecranGAPP.png) 
 
 **Every space must be filled** 
@@ -40,10 +41,9 @@ The following window will be open:
 ### Folder 
 
 In Folder part you have fill 
-- The folder where the photos to scan locate, 
-- The folder where you want to every step of the program will be save, 
-- The folder of the Fiducial template. 
-Your back to the main window. Ypu now have to fill 
+- The folder where the photos to pre-process locate, 
+- The folder where you want to every steps of the program will be save, 
+- The folder of the Fiducial template.
 - The dataset name (you can check il it corresponds to the fiducial template you gave with the "Check dataset" button) 
 - The p-value (% of image width that is a black/white strip)
 - The strip location must be: left, top, right, bottom. You can put sevral location.
@@ -52,9 +52,18 @@ Your back to the main window. Ypu now have to fill
 - The output resolution 
 - The CLAHE Historical calibration 
 - The Sharpening intensity  
-- Check all the steps you want to launch (it is recommended to check all the steps) 
 
-Run the program with the "Run" button. 
+you have to push the buttons in the right order :
+
+- first button "Run Canvas sized and Fiducial mark detection"
+the process can spend time finding fiducial mark especially if you gave a  lot of images. please wait for "FID MARK DETECTION COMPLETED" in the consol to clic next button.
+![Console](images\consoleFinishRunDetection.PNG) 
+
+- second button "Run fid mark correction". fi there are fiducial mark to correct an extention of the main window will be open. You can move and zoom (+/-) on the corner image. double clic on th fiducial center and clic "OK" button, next corner will be open (To find the fiducial centre a target is here to help). When all the corner will be corrected and all modifications in fill finished, the extention will be closed
+![Main window extention](images\capturedecranGAPPcorrectfidmarkextention.png)
+- clic on "Run Reprojection" and wait for the end message in the console: "PROCESS COMPLETED" (could be long)
+- clic on "Run resize" wait for the end messagein th e console: "--- data processing time was [duration of the process] --- (could be long)
+- clic on "Run Create mask" (should be quick)
 
 ### What is the fiducial template? 
 ![Fiducial template example](images\capturedecranfiducialtemplate.png) 
@@ -70,6 +79,7 @@ For instance, this following image is the top right fiducial mark of the first i
 ### How to create fiducial template 
 
 Click on "Createfiducial template", 
+
 ![](images\capturedecranGAPP2.png) 
 
 This new window will be open: 
